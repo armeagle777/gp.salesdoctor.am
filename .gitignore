@@ -8,7 +8,9 @@ forms/
 factures/
 factures1/
 build/
+build/config/
 assets/
+assets/css/
 
 pages/
 imges/
