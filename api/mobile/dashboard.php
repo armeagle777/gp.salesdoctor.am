@@ -1,0 +1,4 @@
+<?php
+
+
+echo 'Dashboard test';
