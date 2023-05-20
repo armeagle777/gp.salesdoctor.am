@@ -3,6 +3,29 @@
 
 <?php
 
+if(isset($_GET['cmd']) && $_GET['cmd'] === 'add_task_from_comment'){
+    $visit_id = mysqli_real_escape_string($con, $_POST['visit_id']);
+    $manager_id = mysqli_real_escape_string($con, $_POST['manager_id']);
+    $task_text = mysqli_real_escape_string($con, $_POST['task_text']);
+    
+    $today = date("Y-m-d");
+    
+    $calendar_date = $today;
+    
+    $sql = "INSERT INTO tasks 
+            (manager_id, task, created_date, calendar_date, visit_id) 
+            VALUES ('$manager_id', '$task_text', '$today', '$calendar_date', '$visit_id')";
+    
+    $query_insert = mysqli_query($con, $sql);
+
+    if($query_insert) {
+    	echo "Հաջողությամբ ավելացված է";
+    }else{
+    	echo "Ստուգեք տվյալները";
+    }
+
+}
+
 if(isset($_GET['cmd']) &&  $_GET['cmd'] === 'upload_ktron_image'){
     try{
         $target_dir = dirname(__FILE__) . "/uploads/ktronner";

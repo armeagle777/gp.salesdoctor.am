@@ -128,149 +128,98 @@ function getDistanceBetweenPointsNew($latitude1, $longitude1, $latitude2, $longi
               <!-- /.card-header -->
               <div class="card-body">
 			  
-				 <form action="/statistics.php" id="statistics_form"> 
-				  <div class="form-row">
-				  
-				 <div class="form-group col-md-3">
-                  <label>Ժամանակահատված</label>
-
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="far fa-calendar-alt"></i>
-                      </span>
-                    </div>
-                    <input type="text" class="form-control float-right" id="reservation" value="<?php echo $datebeet; ?>" name="datebeet">
-                  </div>
-                  <!-- /.input group -->
-                </div>
-                <!-- /.form group -->
-				  
-
-				  <div class="form-group col-md-2">
-							<label for="address">Մարզ</label>
-
-								<select name="region" id="region" class="form-control">
-									<option value="0"> Ընտրել </option>
-										<?php 
-											$query_region = mysqli_query($con, "SELECT * FROM region ORDER by id DESC");
-											while ($array_regions = mysqli_fetch_array($query_region)):
-											$region_id = $array_regions['id'];
-											$region_name = $array_regions['region_name'];
-										?> 
-										 
-									<option value="<?php echo $region_id; ?>" <?php if($region_id == $selected_region) {echo "selected"; } ?>> <?php echo $region_name; ?></option>
-							
-									<?php endwhile; ?>
-							
-								</select>
-
-						  </div>
-
-
-
-
-				  <div class="form-group col-md-2">
-					<label for="district">Տարածք</label>
-						
-					<select name="district" id="district" class="form-control">
-					
-						<option>Ընտրել</option>
-							
-						<?php 
-							$district_query = mysqli_query($con, "SELECT * FROM district WHERE region_id = '$selected_region' ORDER by id DESC");
-							while ($array_district = mysqli_fetch_array($district_query)):
-							$district_id = $array_district['id'];
-							$district_name = $array_district['district_name'];
-						?> 
-						 
-					<option value="<?php echo $district_id; ?>" <?php if($district_id == $selected_district) {echo "selected"; } ?>> <?php echo $district_name; ?></option>
-			
-					<?php endwhile; ?>	
-			
-					</select>
-					
-				  </div>
-				  
-				  <div class="form-group col-md-2">
-					<label for="shop">Խանութ</label>
-						
-					<select name="shop" id="shop" class="form-control">
-
-						<option value="0">Ընտրել</option>
-					
-					<?php 
-							$shops_query = mysqli_query($con, "SELECT shop_id, name, district FROM shops WHERE district = '$selected_district' ORDER by id DESC");
-							while ($array_shops = mysqli_fetch_array($shops_query)):
-							$shop_id = $array_shops['shop_id'];
-							$shop_name = $array_shops['name'];
-						?> 
-						 
-					<option value="<?php echo $shop_id; ?>" <?php if($shop_id == $selected_shop) {echo "selected"; } ?>> <?php echo $shop_name; ?></option>
-			
-					<?php endwhile; ?>
-					
-					</select>
-					
-				  </div>
-				  
-				  <div class="form-group col-md-2">
-							<label for="login">Մենեջեր</label>
-							<select name="manager_select" id="manager_select" class="form-control">
+		<form action="/statistics.php" id="statistics_form"> 
+			<div class="form-row">				  
+				<div class="form-group col-md-3">
+					<label>Ժամանակահատված</label>
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text">
+								<i class="far fa-calendar-alt"></i>
+							</span>
+						</div>
+						<input type="text" class="form-control float-right" id="reservation" value="<?php echo $datebeet; ?>" name="datebeet">
+					</div>
+				</div>
+				<div class="form-group col-md-2">
+						<label for="address">Մարզ</label>
+						<select name="region" id="region" class="form-control">
 							<option value="0"> Ընտրել </option>
 								<?php 
-
-									$query_manager = mysqli_query($con, "SELECT * FROM manager WHERE user_role = '1' AND active = 'on' ORDER by id DESC");
-
-									while ($array_manager = mysqli_fetch_array($query_manager)):
-									$manager_id = $array_manager['id'];
-									$manager_login = $array_manager['login'];
-								?> 
-								 
-								<option value="<?php echo $manager_id; ?>"  <?php if($manager_id_selected == $manager_id ) {echo "selected"; } ?> > <?php echo $manager_login; ?></option>
-								
-								<?php endwhile; ?>
-								
-							</select>
-				  </div>
-							
-							
-					  <div class="form-group col-md-2">
-								<label for="login">Ենթադրվող քանակ</label>
-								<input type="number" class="form-control" id="visit_count" name="visit_count" value="<?php echo $visit_count_est; ?>" placeholder="Այցերի քանակ">
-					  </div>
-					  					  
-					 <div class="form-group col-md-1"  align="center">
-								<label for="login">Բացվածք</label>
-								<input type="checkbox" class="form-control" id="not_grouped" name="not_grouped" value="1" <?php if($not_grouped == '1'){echo "checked"; } ?>>
-					  </div>
-					  
-					 <div class="form-group col-md-1 not_visited_check" <?php if(isset($_GET['not_grouped'])){echo "style='display:none;'";} ?>  align="center">
-								<label for="login" >Չայցելած</label>
-								<input type="checkbox" class="form-control" id="not_visited" name="not_visited" value="1" <?php if($not_visited == '1'){echo "checked"; } ?>>
-					  </div>		
-	
-					  
-					 <div class="form-group col-md-1" style="max-width:150px;display: flex;  flex-direction:column;  justify-content:flex-end;">
-								<button type="submit" class="btn btn-success">Ցուցադրել</button>
-					  </div>
-					  
-					  
-					  
-					  
-					  
-					
-					</div>
-				
-				
-				  </form>
+									$query_region = mysqli_query($con, "SELECT * FROM region ORDER by id DESC");
+									while ($array_regions = mysqli_fetch_array($query_region)):
+									$region_id = $array_regions['id'];
+									$region_name = $array_regions['region_name'];
+								?>										 
+							<option value="<?php echo $region_id; ?>" <?php if($region_id == $selected_region) {echo "selected"; } ?>> <?php echo $region_name; ?></option>							
+								<?php endwhile; ?>							
+						</select>
+				</div>
+				<div class="form-group col-md-2">
+					<label for="district">Տարածք</label>						
+					<select name="district" id="district" class="form-control">					
+						<option value="0">Ընտրել</option>							
+							<?php 
+								$district_query = mysqli_query($con, "SELECT * FROM district WHERE region_id = '$selected_region' ORDER by id DESC");
+								while ($array_district = mysqli_fetch_array($district_query)):
+								$district_id = $array_district['id'];
+								$district_name = $array_district['district_name'];
+							?> 						 
+						<option value="<?php echo $district_id; ?>" <?php if($district_id == $selected_district) {echo "selected"; } ?>> <?php echo $district_name; ?></option>			
+							<?php endwhile; ?>				
+					</select>					
+				</div>				  
+				<div class="form-group col-md-2">
+					<label for="shop">Խանութ</label>						
+					<select name="shop" id="shop" class="form-control">
+						<option value="0">Ընտրել</option>					
+							<?php 
+								$shops_query = mysqli_query($con, "SELECT shop_id, name, district FROM shops WHERE district = '$selected_district' ORDER by id DESC");
+								while ($array_shops = mysqli_fetch_array($shops_query)):
+								$shop_id = $array_shops['shop_id'];
+								$shop_name = $array_shops['name'];
+							?> 						 
+						<option value="<?php echo $shop_id; ?>" <?php if($shop_id == $selected_shop) {echo "selected"; } ?>> <?php echo $shop_name; ?></option>			
+							<?php endwhile; ?>					
+					</select>					
+				</div>				  
+				<div class="form-group col-md-2">
+					<label for="login">Մենեջեր</label>
+					<select name="manager_select" id="manager_select" class="form-control">
+						<option value="0"> Ընտրել </option>
+							<?php 
+								$query_manager = mysqli_query($con, "SELECT * FROM manager WHERE user_role = '1' AND active = 'on' ORDER by id DESC");
+								while ($array_manager = mysqli_fetch_array($query_manager)):
+								$manager_id = $array_manager['id'];
+								$manager_login = $array_manager['login'];
+							?> 								 
+						<option value="<?php echo $manager_id; ?>"  <?php if($manager_id_selected == $manager_id ) {echo "selected"; } ?> > <?php echo $manager_login; ?></option>								
+							<?php endwhile; ?>								
+					</select>
+				</div>							
+				<div class="form-group col-md-2">
+					<label for="login">Ենթադրվող քանակ</label>
+					<input type="number" class="form-control" id="visit_count" name="visit_count" value="<?php echo $visit_count_est; ?>" placeholder="Այցերի քանակ">
+				</div>					  					  
+				<div class="form-group col-md-1"  align="center">
+					<label for="login">Բացվածք</label>
+					<input type="checkbox" class="form-control" id="not_grouped" name="not_grouped" value="1" <?php if($not_grouped == '1'){echo "checked"; } ?>>
+				</div>					  
+				<div class="form-group col-md-1 not_visited_check" <?php if(isset($_GET['not_grouped'])){echo "style='display:none;'";} ?>  align="center">
+					<label for="login" >Չայցելած</label>
+					<input type="checkbox" class="form-control" id="not_visited" name="not_visited" value="1" <?php if($not_visited == '1'){echo "checked"; } ?>>
+				</div>				  
+				<div class="form-group col-md-1" style="max-width:150px;display: flex;  flex-direction:column;  justify-content:flex-end;">
+					<button type="submit" class="btn btn-success">Ցուցադրել</button>
+				</div>				  
+				</div>
+				</form>
 			  
 		
 			  
                 <table id="example1" class="table table-bordered table-striped">
                   <thead>
-                  <tr>
-				  
+                  <tr>				  
                     <th>ID</th>
                     <th>QR համար</th>
 					<th>Խանութի Անուն</th>
@@ -281,16 +230,13 @@ function getDistanceBetweenPointsNew($latitude1, $longitude1, $latitude2, $longi
                     <th>Շրջան</th>
 					<th>Մենեջեր</th>
 					<th>Ոլորտի անվանում</th>
-					<th>Ժամանակ</th>
-					
-					<?php if($not_grouped !='1'): ?>
-					
+					<th>Ժամանակ</th>				
+						<?php if($not_grouped !='1'): ?>					
 					<th>Այցի քանակ</th>
 					<th>Տարբերություն</th>
 					<th>Գնահատման քանակ</th>
-					<?php endif; ?>
-
-					<?php if($not_grouped =='1'): ?>
+						<?php endif; ?>
+						<?php if($not_grouped =='1'): ?>
 					<th>Մեկնաբանություն</th>
 					<th class="text-nowrap">Գույքի դիրք</th>
 					<th class="text-nowrap">Գույքի վիճակ</th>
@@ -302,261 +248,241 @@ function getDistanceBetweenPointsNew($latitude1, $longitude1, $latitude2, $longi
 					<th class="text-nowrap">Ապրանքի ժամկետ</th>
 					<th>Ապրանքի քանակությունը սառնարանում</th>
 					<th>Ռադիուս</th>
-					<?php endif; ?>
-					
+						<?php endif; ?>					
                     <th style="width:150px;">Դիտել</th>
                   </tr>
                   </thead>
-                  <tbody>
-				  
-				 <?php 
-					
-					if(isset($datebeet) and $datebeet != ''):
-					
-					if($not_grouped == '1'){
-					    $sql="SELECT *,
-					        visits.id AS ID,
-						    visits.comment AS visit_comment,
-                            shops.name  AS shop_name,
-                            shops.address AS SHOP_ADDRESS,
-                            D.district_name AS DISTRICT_NAME,
-                            RE.region_name AS REGION_NAME,
-						    ASE.name AS as_class_name
-						FROM visits 
-						INNER JOIN shops on visits.shop_id = shops.shop_id
-                        LEFT JOIN district D ON D.id=shops.district
-                        LEFT JOIN region RE ON RE.id = shops.region
-						LEFT JOIN as_classifications ASE ON shops.as_classification_id = ASE.id
-						LEFT JOIN (select visit_id,
-                            max(case when rate_id = 2  then rate_value end) guyqi_dirq,
-                            max(case when rate_id = 3 then rate_value end) guyqi_vijak,
-                            max(case when rate_id = 4 then rate_value end) apranqi_dasavorutyun,
-                            max(case when rate_id = 5 then rate_value end) tesakanu_arkayutyun,
-                            max(case when rate_id = 6 then rate_value end) xanuti_verabermunq,
-                            max(case when rate_id = 7 then rate_value end) vajarqi_dinamika,
-                            max(case when rate_id = 8 then rate_value end) marqetingi_anhrajeshtutyun,
-                            max(case when rate_id = 9 then rate_value end) apranqi_jamket,
-                            max(case when rate_id = 10 then rate_value end) apranqi_qanakutyun           
-                        from shop_evaluation
-                        group by visit_id) AS evaluation ON evaluation.visit_id = visits.id
-						WHERE 1=1 $query_manager_id_selected 
-						    AND visits.date $query_date_range 
-						                    $query_region_select 
-						                    $query_district_select 
-						                    $query_shop_select 
-						                    ORDER by visits.id DESC";
-						
+                  <tbody>				  
+						<?php 					
+							if(isset($datebeet) and $datebeet != ''):					
+								if($not_grouped == '1'){
+									$sql="SELECT *,
+										visits.id AS ID,
+										visits.manager_id AS MANAGHER_ID,
+										visits.shop_id AS SHOP_ID,
+										visits.comment AS visit_comment,
+										shops.name  AS SHOP_NAME,
+										shops.address AS SHOP_ADDRESS,
+										D.district_name AS DISTRICT_NAME,
+										RE.region_name AS REGION_NAME,
+										ASE.name AS as_class_name,
+										T.visit_id as TASK_IS_REGISTERED
+									FROM visits 
+									INNER JOIN shops on visits.shop_id = shops.shop_id
+									LEFT JOIN district D ON D.id=shops.district
+									LEFT JOIN tasks T ON T.visit_id=visits.id
+									LEFT JOIN region RE ON RE.id = shops.region
+									LEFT JOIN as_classifications ASE ON shops.as_classification_id = ASE.id
+									LEFT JOIN (select visit_id,
+										max(case when rate_id = 2  then rate_value end) guyqi_dirq,
+										max(case when rate_id = 3 then rate_value end) guyqi_vijak,
+										max(case when rate_id = 4 then rate_value end) apranqi_dasavorutyun,
+										max(case when rate_id = 5 then rate_value end) tesakanu_arkayutyun,
+										max(case when rate_id = 6 then rate_value end) xanuti_verabermunq,
+										max(case when rate_id = 7 then rate_value end) vajarqi_dinamika,
+										max(case when rate_id = 8 then rate_value end) marqetingi_anhrajeshtutyun,
+										max(case when rate_id = 9 then rate_value end) apranqi_jamket,
+										max(case when rate_id = 10 then rate_value end) apranqi_qanakutyun           
+									from shop_evaluation
+									group by visit_id) AS evaluation ON evaluation.visit_id = visits.id
+									WHERE 1=1 $query_manager_id_selected 
+										AND visits.date $query_date_range 
+														$query_region_select 
+														$query_district_select 
+														$query_shop_select 
+														ORDER by visits.id DESC";
+									
+														
+								}else{
+									$sql = "SELECT *,
+												visits.id AS ID,
+												visits.manager_id AS MANAGHER_ID,
+												COUNT(visits.shop_id) AS visit_count ,
+												shops.name  AS SHOP_NAME,
+												visits.shop_id AS SHOP_ID,
+												shops.address AS SHOP_ADDRESS,
+												shops.shop_latitude,
+												shops.shop_longitude,
+												CE.count_evaluation,
+												D.district_name AS DISTRICT_NAME,
+												RE.region_name AS REGION_NAME,
+												ASE.name AS as_class_name
+											FROM visits 
+												INNER JOIN shops on visits.shop_id = shops.shop_id
+												LEFT JOIN district D ON D.id=shops.district
+												LEFT JOIN region RE ON RE.id = shops.region
+												LEFT JOIN (
+													SELECT shop_id,count(DISTINCT visit_id) AS count_evaluation 
+													FROM shop_evaluation 
+													WHERE 1
+														$evaluation_manager_where_claus 
+														AND created_at $query_date_range 
+												GROUP BY 
+													visit_id
+												) AS CE ON CE.shop_id = shops.id
+												LEFT JOIN as_classifications ASE ON shops.as_classification_id = ASE.id
+											WHERE 1
+												$query_manager_id_selected 
+												AND visits.date $query_date_range 
+												$query_region_select 
+												$query_district_select 
+												$query_shop_select 
+											GROUP by visits.shop_id 
+											ORDER by visits.id DESC";						
+								}
+
+								$query = mysqli_query($con, $sql);
 											
-					}else{
-					    $sql = "SELECT *,
-					                visits.id AS ID,
-	                                COUNT(visits.shop_id) AS visit_count ,
-	                                shops.name  AS shop_name,
-	                                shops.address AS SHOP_ADDRESS,
-	                                CE.count_evaluation,
-	                                D.district_name AS DISTRICT_NAME,
-	                                RE.region_name AS REGION_NAME,
-	                                ASE.name AS as_class_name
-                                FROM visits 
-                                    INNER JOIN shops on visits.shop_id = shops.shop_id
-                                    LEFT JOIN district D ON D.id=shops.district
-                                    LEFT JOIN region RE ON RE.id = shops.region
-                                    LEFT JOIN (
-                                        SELECT shop_id,count(DISTINCT visit_id) AS count_evaluation 
-                                        FROM shop_evaluation 
-                                        WHERE 1
-                                            $evaluation_manager_where_claus 
-                                            AND created_at $query_date_range 
-                                    GROUP BY 
-                                    	visit_id
-                                    ) AS CE ON CE.shop_id = shops.id
-                                    LEFT JOIN as_classifications ASE ON shops.as_classification_id = ASE.id
-                                WHERE 1
-                                    $query_manager_id_selected 
-                                    AND visits.date $query_date_range 
-                                    $query_region_select 
-                                    $query_district_select 
-                                    $query_shop_select 
-                                GROUP by visits.shop_id 
-                                ORDER by visits.id DESC";
+								while ($array_visits = mysqli_fetch_array($query)):
+									$visit_id = $array_visits['ID'];
+									$shop_id = $array_visits['SHOP_ID'];
+									$shop_qr_id = $array_visits['qr_id'];
+									$law_name = $array_visits['law_name'];
+									$shop_name = $array_visits['SHOP_NAME'];
+									$shop_address = $array_visits['SHOP_ADDRESS'];
+									$hvhh = $array_visits['hvhh'];
+									$manager_id = $array_visits['manager_id'];
+									$date = $array_visits['date'];
+									$comment = $array_visits['visit_comment'];
+									$latitude = $array_visits['latitude'];
+									$longitude = $array_visits['longitude'];
+									$visit_count = $array_visits['visit_count'];
+									$evaluation_count = $array_visits['count_evaluation'];
+									$as_class_name = $array_visits['as_class_name'];
+									$guyqi_dirq = $array_visits['guyqi_dirq'];
+									$guyqi_vijak = $array_visits['guyqi_vijak'];
+									$apranqi_dasavorutyun = $array_visits['apranqi_dasavorutyun'];
+									$tesakanu_arkayutyun = $array_visits['tesakanu_arkayutyun'];
+									$xanuti_verabermunq = $array_visits['xanuti_verabermunq'];
+									$vajarqi_dinamika = $array_visits['vajarqi_dinamika'];
+									$marqetingi_anhrajeshtutyun = $array_visits['marqetingi_anhrajeshtutyun'];
+									$apranqi_jamket = $array_visits['apranqi_jamket'];
+									$apranqi_qanakutyun = $array_visits['apranqi_qanakutyun'];
+									$district_name=$array_visits['DISTRICT_NAME'];
+									$region_name=$array_visits['REGION_NAME'];
+									$TASK_IS_REGISTERED=$array_visits['TASK_IS_REGISTERED'];
+									$MANAGHER_ID=$array_visits['MANAGHER_ID'];
+									$shop_latitude = $array_visits['shop_latitude'];
+									$shop_longitude = $array_visits['shop_longitude'];
+									
+									if(!empty($TASK_IS_REGISTERED) || empty($comment)){
+										$disabled=' disabled ';
+									}else{
+										$disabled='';
+									}
 
-						
-					}
-					
-					$query = mysqli_query($con, $sql);
-				 					
-					while ($array_visits = mysqli_fetch_array($query)):
-					$visit_id = $array_visits['ID'];
-					$shop_id = $array_visits['shop_id'];
-					$shop_qr_id = $array_visits['qr_id'];
-					$law_name = $array_visits['law_name'];
-					$shop_name = $array_visits['shop_name'];
-					$shop_address = $array_visits['SHOP_ADDRESS'];
-					$hvhh = $array_visits['hvhh'];
-					$manager_id = $array_visits['manager_id'];
-					$date = $array_visits['date'];
-					$comment = $array_visits['visit_comment'];
-					$latitude = $array_visits['latitude'];
-					$longitude = $array_visits['longitude'];
-					$visit_count = $array_visits['visit_count'];
-					$evaluation_count = $array_visits['count_evaluation'];
-					$as_class_name = $array_visits['as_class_name'];
-					$guyqi_dirq = $array_visits['guyqi_dirq'];
-					$guyqi_vijak = $array_visits['guyqi_vijak'];
-					$apranqi_dasavorutyun = $array_visits['apranqi_dasavorutyun'];
-					$tesakanu_arkayutyun = $array_visits['tesakanu_arkayutyun'];
-					$xanuti_verabermunq = $array_visits['xanuti_verabermunq'];
-					$vajarqi_dinamika = $array_visits['vajarqi_dinamika'];
-					$marqetingi_anhrajeshtutyun = $array_visits['marqetingi_anhrajeshtutyun'];
-					$apranqi_jamket = $array_visits['apranqi_jamket'];
-					$apranqi_qanakutyun = $array_visits['apranqi_qanakutyun'];
-					$district_name=$array_visits['DISTRICT_NAME'];
-					$region_name=$array_visits['REGION_NAME'];
-
-					if($active == 'on'){
-						$active = 'Այո';
-					}else{
-						$active = 'Ոչ';
-					}
-					
-					$query_shop = mysqli_query($con, "SELECT qr_id, name, address, shop_latitude, shop_longitude FROM shops WHERE shop_id='$shop_id' ");
-					$array_shop = mysqli_fetch_array($query_shop);
-					
-					$shop_shop_id = $array_shop['shop_id'];
-
-				// 	$shop_name = $array_shop['name'];
-					
-					$shop_latitude = $array_shop['shop_latitude'];
-					$shop_longitude = $array_shop['shop_longitude'];
-
-					$query_manager = mysqli_query($con, "SELECT manager.login AS manager_login, client.law_name AS client_name from manager, client WHERE manager.id='$manager_id' AND manager.client_id = client.id ");
-					$array_manager = mysqli_fetch_array($query_manager);
-					if($visit_count_est == ''){
-						$visit_count_est = 0;
-					}
-					$visits_diff = $visit_count_est - $visit_count;
-					if($visits_diff < 0){
-						$visits_diff = $visits_diff * (-1);
-						$plus = '+';
-					}
-					//$visits_diff = $visits_diff * (-1);
-				 ?> 
-				  
-                  <tr>
-				  
-				 <td><?php echo $visit_id; ?></td>
-				 <td class="word_break"><?php echo $shop_qr_id; ?></td>
-				 <td><?php echo $shop_name; ?></td>
-				 <td><?php echo $hvhh; ?></td>
-				 <td><?php echo $law_name; ?></td>
-				 <td><?php echo $shop_address; ?></td>
-				 <td><?php echo $region_name;  ?></td>
-				 <td><?php echo $district_name;  ?></td>
-				 <td><?php echo $array_manager['manager_login']; ?></td>
-				 <td><?php echo $as_class_name; ?></td>
-				 <td>
-					 <?php
-						if($not_grouped == '1'){
-						    echo $date;
-						}else{
-							echo $start_date;
-							echo " - ";
-							echo $end_date;
-						}
-					 ?>
-				 </td>
-				 
-				    <?php if($not_grouped !='1'): ?>
-				 <td><?php echo $visit_count; ?></td>
-				 <td><?php echo $plus; echo $visits_diff; ?></td>
-				 <td><?php echo $evaluation_count;  ?></td>
-				    <?php endif; ?>
-				 
-				 <?php if($not_grouped =='1'): ?>
-					<td><?php echo $comment; ?></td>
-					<td><?php  echo (int)$guyqi_dirq   ;?></td>
-					<td><?php  echo (int)$guyqi_vijak ;?></td>
-					<td><?php  echo (int)$apranqi_dasavorutyun ;?></td>
-					<td><?php  echo (int)$tesakanu_arkayutyun ;?></td>
-					<td><?php  echo (int)$xanuti_verabermunq ;?></td>
-					<td><?php  echo (int)$vajarqi_dinamika ;?></td>
-					<td><?php  echo (int)$marqetingi_anhrajeshtutyun ;?></td>
-					<td><?php  echo (int)$apranqi_jamket ;?></td>
-					<td><?php  echo (int)$apranqi_qanakutyun ;?></td>
-					<td>
-					 <?php 
-						if($shop_latitude !='' and $not_grouped == '1'){
-							$km = getDistanceBetweenPointsNew($latitude, $longitude, $shop_latitude, $shop_longitude, $unit = 'Km');
-							$km2 = getDistanceBetweenPointsNew($latitude, $longitude, $shop_latitude, $shop_longitude, $unit = 'Km');
-							if($_SESSION['role']!= '1' ){
-								echo $km;
-							}
-							echo " ";
-							$km = intval($km);
-							if($km <= 100 or $km2 == 'NAN'){
-								echo "<i class='fa fa-check' style='color:#28a745'>";
-							}else{
-								echo "<i class='fa fa-times' style='color:#bd2130'>";
-							}
-						}
-					 ?>
-					</td>
-				<?php endif; ?>
-
-                 <td style="width:150px;">
-					
-					<?php if($not_grouped =='1'): ?>
-						<button style="width: 33px;" class="btn btn-primary btn-sm rounded-0 save_coordinates after_<?php echo $visit_id; ?>"  data-lat="<?php echo $latitude; ?>" data-long="<?php echo $longitude; ?>" data-curshop="<?php echo $shop_id; ?>" data-visitid="<?php echo $visit_id; ?>" title="Պահպանել կոորդինատները"><i class="fas fa-save"></i></button>
-
-					
-						<a href="#"style="width: 33px;" data-toggle="modal" data-target="#map<?php echo $visit_id; ?>"  class="btn btn-warning btn-sm rounded-0 delete_client_button" title="Դիտել"><i class="fas fa-map-marker-alt"></i></a>
-							
-							<!-- Modal -->
-						<div class="modal fade" id="map<?php echo $visit_id; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-						  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-							<div class="modal-content">
-							  <div class="modal-header">
-								<h5 class="modal-title" id="exampleModalLongTitle">N<?php echo $visit_id; ?>այցի քարտեզը</h5>
-								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								  <span aria-hidden="true">&times;</span>
-								</button>
-							  </div>
-							  <div class="modal-body">
-
-
-						<iframe  width="100%" height="350" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q=<?php echo $latitude; ?>,<?php echo $longitude; ?>&hl=es&z=14&amp;output=embed"></iframe>
-
+									if($active == 'on'){
+										$active = 'Այո';
+									}else{
+										$active = 'Ոչ';
+									}
 
 								
-							  </div>
-							  <div class="modal-footer">
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Փակել</button>
-							  </div>
-							</div>
-						  </div>
-						</div>
-						
 
-				 
-					<?php endif; ?>
-				 
-				 
-				 
-				 
-						<form action="view_visit.php" method="GET" target="_blank" style="display:inline;">
-						<input type="hidden" name="datebeet" value="<?php echo $datebeet; ?>">
-						<input type="hidden" name="manager_select" value="<?php echo $manager_id_selected; ?>">
-						<input type="hidden" name="client" value="<?php echo $curr_client_id; ?>">
-						<input type="hidden" name="shop_id" value="<?php echo $shop_id;  ?>">
-				 
-						<button type="submit" class="btn btn-success btn-sm rounded-0 delete_client_button" title="Դիտել"><i class="fa fa-eye"></i></button>
-						</form>
-				  </td>
-                  </tr>
-				  
-				  
-                 
-                 <?php endwhile; ?>
+									$query_manager = mysqli_query($con, "SELECT manager.login AS manager_login, client.law_name AS client_name from manager, client WHERE manager.id='$MANAGHER_ID' AND manager.client_id = client.id ");
+									$array_manager = mysqli_fetch_array($query_manager);
+									if($visit_count_est == ''){
+										$visit_count_est = 0;
+									}
+									$visits_diff = $visit_count_est - $visit_count;
+									if($visits_diff < 0){
+										$visits_diff = $visits_diff * (-1);
+										$plus = '+';
+									}
+									//$visits_diff = $visits_diff * (-1);
+						?>				  
+					<tr>				  
+						<td><?php echo $visit_id; ?></td>
+						<td class="word_break"><?php echo $shop_qr_id; ?></td>
+						<td><?php echo $shop_name; ?></td>
+						<td><?php echo $hvhh; ?></td>
+						<td><?php echo $law_name; ?></td>
+						<td><?php echo $shop_address; ?></td>
+						<td><?php echo $region_name;  ?></td>
+						<td><?php echo $district_name;  ?></td>
+						<td><?php echo $array_manager['manager_login']; ?></td>
+						<td><?php echo $as_class_name; ?></td>
+						<td>
+							<?php
+								if($not_grouped == '1'){
+									echo $date;
+								}else{
+									echo $start_date;
+									echo " - ";
+									echo $end_date;
+								}
+							?>
+						</td>				 
+				    		<?php if($not_grouped !='1'): ?>
+						<td><?php echo $visit_count; ?></td>
+						<td><?php echo $plus; echo $visits_diff; ?></td>
+						<td><?php echo $evaluation_count;  ?></td>
+				    		<?php endif; ?>				 
+				 			<?php if($not_grouped =='1'): ?>
+						<td><?php echo $comment; ?></td>
+						<td><?php  echo (int)$guyqi_dirq   ;?></td>
+						<td><?php  echo (int)$guyqi_vijak ;?></td>
+						<td><?php  echo (int)$apranqi_dasavorutyun ;?></td>
+						<td><?php  echo (int)$tesakanu_arkayutyun ;?></td>
+						<td><?php  echo (int)$xanuti_verabermunq ;?></td>
+						<td><?php  echo (int)$vajarqi_dinamika ;?></td>
+						<td><?php  echo (int)$marqetingi_anhrajeshtutyun ;?></td>
+						<td><?php  echo (int)$apranqi_jamket ;?></td>
+						<td><?php  echo (int)$apranqi_qanakutyun ;?></td>
+						<td>
+							<?php 
+								if($shop_latitude !='' and $not_grouped == '1'){
+									$km = getDistanceBetweenPointsNew($latitude, $longitude, $shop_latitude, $shop_longitude, $unit = 'Km');
+									$km2 = getDistanceBetweenPointsNew($latitude, $longitude, $shop_latitude, $shop_longitude, $unit = 'Km');
+									if($_SESSION['role']!= '1' ){
+										echo $km;
+									}
+									echo " ";
+									$km = intval($km);
+									if($km <= 100 or $km2 == 'NAN'){
+										echo "<i class='fa fa-check' style='color:#28a745'>";
+									}else{
+										echo "<i class='fa fa-times' style='color:#bd2130'>";
+									}
+								}
+							?>
+						</td>
+							<?php endif; ?>
+                 		<td style="width:150px;">					
+								<?php if($not_grouped =='1'): ?>
+							<button visit_id="<?php echo $visit_id; ?>" manager_id="<?php echo $MANAGHER_ID ; ?>" task_text="<?php echo $shop_address.'->'.$shop_name.'->'.$comment  ; ?>" class="btn btn-secondary btn-sm add_task_from_comment" style="color:#fff" <?php echo $disabled ; ?> title="Ստեղծել առաջադրանք"><i  ><i class='fa fa-tasks'></i></button>
+							<button style="width: 33px;" class="btn btn-primary btn-sm rounded-0 save_coordinates after_<?php echo $visit_id; ?>"  data-lat="<?php echo $latitude; ?>" data-long="<?php echo $longitude; ?>" data-curshop="<?php echo $shop_id; ?>" data-visitid="<?php echo $visit_id; ?>" title="Պահպանել կոորդինատները"><i class="fas fa-save"></i></button>					
+							<a href="#"style="width: 33px;" data-toggle="modal" data-target="#map<?php echo $visit_id; ?>"  class="btn btn-warning btn-sm rounded-0 delete_client_button" title="Դիտել"><i class="fas fa-map-marker-alt"></i></a>								
+							<!-- Modal -->
+							<div class="modal fade" id="map<?php echo $visit_id; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+								<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="exampleModalLongTitle">N<?php echo $visit_id; ?>այցի քարտեզը</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+											<iframe  width="100%" height="350" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q=<?php echo $latitude; ?>,<?php echo $longitude; ?>&hl=es&z=14&amp;output=embed"></iframe>									
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-secondary" data-dismiss="modal">Փակել</button>
+										</div>
+									</div>
+								</div>
+							</div>				 
+								<?php endif; ?>				        
+							<form action="view_visit.php" method="GET" target="_blank" style="display:inline;">
+								<input type="hidden" name="datebeet" value="<?php echo $datebeet; ?>">
+								<input type="hidden" name="manager_select" value="<?php echo $MANAGHER_ID; ?>">
+								<input type="hidden" name="client" value="<?php echo $curr_client_id; ?>">
+								<input type="hidden" name="shop_id" value="<?php echo $shop_id;  ?>">
+								<button type="submit" class="btn btn-success btn-sm rounded-0 delete_client_button" title="Դիտել"><i class="fa fa-eye"></i></button>
+							</form>
+				  		</td>
+                  	</tr>                
+							<?php endwhile; ?>
                  
 				 
 				 
@@ -719,6 +645,26 @@ include 'footer.php';
 
 
 <script>
+
+$('.add_task_from_comment').on('click', function(){
+    const visit_id = $(this).attr('visit_id')
+    const task_text = $(this).attr('task_text')
+    const manager_id = $(this).attr('manager_id')
+
+    $.ajax({
+           type: "POST",
+           url: "/actions.php?cmd=add_task_from_comment",
+           data: {visit_id,task_text,manager_id}, 
+           success: function(data)
+           {
+			   location.reload()
+
+           }
+		   
+         });
+    
+
+})
 
 $( "#region" ).change(function() {
 	  
