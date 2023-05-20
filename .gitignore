@@ -1,2 +1,6 @@
-/buckups
-/dist
+buckups/
+dist/
+PHPExcel/
+plugins/
+uploads/
+forms/
