@@ -490,7 +490,15 @@
                     Խանութների ցանկ
                 </p>
             </a>
-        </li>		  
+        </li>
+        <li class="nav-item has-treeview">
+            <a href="/shops_abandoned.php" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>
+                    Անտեսված խանութների ցանկ
+                </p>
+            </a>
+        </li>			  
         <li class="nav-item has-treeview">
             <a href="/property1.php" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>

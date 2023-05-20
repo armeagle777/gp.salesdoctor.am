@@ -47,12 +47,10 @@
 		$hasDebt = $array_shops['hasDebt'];
 	}
 	
-	if($action == 'add'){
-		
+	if($action == 'add'){		
 		$query_data_shop = mysqli_query($con, "SELECT * FROM shops ORDER BY id DESC LIMIT 1 ");
 		$array_shops = mysqli_fetch_array($query_data_shop);
-		$last_shop_id = $array_shops['shop_id'] + 1;
-
+		$last_shop_id = intval($array_shops['id']) + 1;
 	}
 	
 ?>
