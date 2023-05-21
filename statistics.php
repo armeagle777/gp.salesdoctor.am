@@ -100,20 +100,18 @@ function getDistanceBetweenPointsNew($latitude1, $longitude1, $latitude2, $longi
 }
 </style>
 
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
+<div class="content-wrapper">
     <section class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1>Վիճակագրություն</h1>
-          </div>
-          <div class="col-sm-6 d-flex justify-content-end">
-			<a href="/dashboard.php" class="btn btn-info"><i class="fa fa-window-close"></i></a>
-          </div>
+      	<div class="container-fluid">
+        	<div class="row mb-2">
+				<div class="col-sm-6">
+					<h1>Վիճակագրություն</h1>
+				</div>
+				<div class="col-sm-6 d-flex justify-content-end">
+					<a href="/dashboard.php" class="btn btn-info"><i class="fa fa-window-close"></i></a>
+				</div>
+			</div>
         </div>
-      </div><!-- /.container-fluid -->
     </section>
 
     <!-- Main content -->
@@ -231,24 +229,24 @@ function getDistanceBetweenPointsNew($latitude1, $longitude1, $latitude2, $longi
 					<th>Մենեջեր</th>
 					<th>Ոլորտի անվանում</th>
 					<th>Ժամանակ</th>				
-						<?php if($not_grouped !='1'): ?>					
-					<th>Այցի քանակ</th>
-					<th>Տարբերություն</th>
-					<th>Գնահատման քանակ</th>
-						<?php endif; ?>
-						<?php if($not_grouped =='1'): ?>
-					<th>Մեկնաբանություն</th>
-					<th class="text-nowrap">Գույքի դիրք</th>
-					<th class="text-nowrap">Գույքի վիճակ</th>
-					<th>Ապրանքի դասավորվածություն</th>
-					<th>Տեսականու առկայություն</th>
-					<th>Խանութի վերաբերմունքը բրենդին և սպասարկմանը</th>
-					<th>Վաճառքի դինամիկա</th>
-					<th>Մարքեթինգի տրամադրման անհրաժեշտություն</th>
-					<th class="text-nowrap">Ապրանքի ժամկետ</th>
-					<th>Ապրանքի քանակությունը սառնարանում</th>
-					<th>Ռադիուս</th>
-						<?php endif; ?>					
+					<?php if($not_grouped !='1'): ?>					
+						<th>Այցի քանակ</th>
+						<th>Տարբերություն</th>
+						<th>Գնահատման քանակ</th>
+					<?php endif; ?>
+					<?php if($not_grouped =='1'): ?>
+						<th>Մեկնաբանություն</th>
+						<th class="text-nowrap">Գույքի դիրք</th>
+						<th class="text-nowrap">Գույքի վիճակ</th>
+						<th>Ապրանքի դասավորվածություն</th>
+						<th>Տեսականու առկայություն</th>
+						<th>Խանութի վերաբերմունքը բրենդին և սպասարկմանը</th>
+						<th>Վաճառքի դինամիկա</th>
+						<th>Մարքեթինգի տրամադրման անհրաժեշտություն</th>
+						<th class="text-nowrap">Ապրանքի ժամկետ</th>
+						<th>Ապրանքի քանակությունը սառնարանում</th>
+						<th>Ռադիուս</th>
+					<?php endif; ?>					
                     <th style="width:150px;">Դիտել</th>
                   </tr>
                   </thead>
@@ -558,26 +556,23 @@ function getDistanceBetweenPointsNew($latitude1, $longitude1, $latitude2, $longi
 					<th>Մենեջեր</th>
 					<th>Ոլորտի անվանում</th>
 					<th>Ժամանակ</th>
-
-					<?php if($not_grouped !='1'): ?>
-					
-					<th>Այցի քանակ</th>
-					<th>Տարբերություն</th>
-					<th>Գնահատման քանակ</th>
+					<?php if($not_grouped !='1'): ?>					
+						<th>Այցի քանակ</th>
+						<th>Տարբերություն</th>
+						<th>Գնահատման քանակ</th>
 					<?php endif; ?>
-
 					<?php if($not_grouped =='1'): ?>
-					<th>Մեկնաբանություն</th>
-					<th>Ռադիուս</th>
-					<th></th>
-					<th></th>
-					<th></th>
-					<th></th>
-					<th></th>
-					<th></th>
-					<th></th>
-					<th></th>
-					<th></th>
+						<th>Մեկնաբանություն</th>
+						<th>Ռադիուս</th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
 					<?php endif; ?>
                     <th style="min-width:170px;">Դիտել</th>
                   </tr>
@@ -891,20 +886,20 @@ $('#not_grouped').click(function() {
 
   });
   
-    function draw_star(n){
-        if(n== 0){
-            return 0
-        }
-        let result=''
-        for(i=1; i < 6; i++){
-            if(i<= n){
-                result += '<span class="fa fa-star checked_star"></span>';
-            }else {
-                result += '<span class="fa fa-star text-muted"></span>';
-            }
-        }
-        return result
-    }
+    // function draw_star(n){
+    //     if(n== 0){
+    //         return 0
+    //     }
+    //     let result=''
+    //     for(i=1; i < 6; i++){
+    //         if(i<= n){
+    //             result += '<span class="fa fa-star checked_star"></span>';
+    //         }else {
+    //             result += '<span class="fa fa-star text-muted"></span>';
+    //         }
+    //     }
+    //     return result
+    // }
 </script>
 </body>
 </html>

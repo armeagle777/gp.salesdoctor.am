@@ -187,168 +187,201 @@
                 <table id="example1" class="table table-bordered table-striped" width="100%"> 
 					<thead>
 						<tr>				  
-						<th>ID</th>
-						<th>QR համար</th>
-						<th>Խանութի Անուն</th>
-						<th>Խանութի Հասցե</th>
-						<th>Շրջան</th>
-						<th>Մենեջեր</th>
-						<th>Գործընկեր</th>
-						<th>Ժամանակ</th>
-						<th>Ռադիուս</th>
-						<th>Նկարներ</th>
-						<th>Մեկնաբանություն</th>
-						<th>Քարտեզ</th>
+							<th>ID</th>
+							<th>QR համար</th>
+							<th>Խանութի Անուն</th>
+							<th>Խանութի Հասցե</th>
+							<th>Շրջան</th>
+							<th>Մենեջեր</th>
+							<th>Գործընկեր</th>
+							<?php if($not_photo != 'on'): ?>
+								<th>Ժամանակ</th>
+								<th>Ռադիուս</th>
+								<th>Նկարներ</th>								
+								<th class="text-nowrap">Գույքի դիրք</th>
+								<th class="text-nowrap">Գույքի վիճակ</th>
+								<th>Ապրանքի դասավորվածություն</th>
+								<th>Տեսականու առկայություն</th>
+								<th>Խանութի վերաբերմունքը բրենդին և սպասարկմանը</th>
+								<th>Վաճառքի դինամիկա</th>
+								<th>Մարքեթինգի տրամադրման անհրաժեշտություն</th>
+								<th class="text-nowrap">Ապրանքի ժամկետ</th>
+								<th>Ապրանքի քանակությունը սառնարանում</th>
+								<th>Մեկնաբանություն</th>
+								<th>Քարտեզ</th>
+							<?php endif; ?>
 						</tr>
 					</thead>
 					<tbody>				  
-							<?php 
-								if($not_photo == 'on'){	
-									$sql=  "SELECT * 
-											FROM shops 
-											WHERE shops.shop_id not in (
-												SELECT shop_id FROM visit_images WHERE visit_images.date $query_date_range
-												) 
-											$query_manager_1 
+						<?php 
+							if($not_photo == 'on'){	
+								$sql=  "SELECT * 
+										FROM shops 
+										WHERE shops.shop_id not in (
+											SELECT shop_id FROM visit_images WHERE visit_images.date $query_date_range
+											) 
+										$query_manager_1 
+										$query_region_select 
+										$query_district_select 
+										$query_shop_select ";													
+							}else{
+								$sql=  "SELECT *, 
+											visit_images.visit_id AS v_id 
+										FROM visit_images 
+											INNER JOIN visits ON visit_images.visit_id = visits.id 
+											LEFT JOIN shops ON visits.shop_id = shops.shop_id 
+											LEFT JOIN district on shops.district = district.id
+											LEFT JOIN (select visit_id,
+												max(case when rate_id = 2  then rate_value end) guyqi_dirq,
+												max(case when rate_id = 3 then rate_value end) guyqi_vijak,
+												max(case when rate_id = 4 then rate_value end) apranqi_dasavorutyun,
+												max(case when rate_id = 5 then rate_value end) tesakanu_arkayutyun,
+												max(case when rate_id = 6 then rate_value end) xanuti_verabermunq,
+												max(case when rate_id = 7 then rate_value end) vajarqi_dinamika,
+												max(case when rate_id = 8 then rate_value end) marqetingi_anhrajeshtutyun,
+												max(case when rate_id = 9 then rate_value end) apranqi_jamket,
+												max(case when rate_id = 10 then rate_value end) apranqi_qanakutyun           
+											from shop_evaluation
+											group by visit_id) AS evaluation ON evaluation.visit_id = visits.id 
+										WHERE visits.date $query_date_range 
+											$query_manager_2 
 											$query_region_select 
 											$query_district_select 
-											$query_shop_select ";													
+											$query_shop_select 
+										GROUP by visit_images.visit_id 
+										ORDER by visits.date DESC";
+							}
+							// echo $sql;
+							$query = mysqli_query($con, $sql);
+
+							while ($array_visits = mysqli_fetch_array($query)):
+								$shop_id = $array_visits['shop_id'];
+								if($not_photo == 'on'){
+									$manager_id = $manager_id_selected;
 								}else{
-									$sql=  "SELECT *, 
-												visit_id AS v_id 
-											FROM visit_images 
-												INNER JOIN visits ON visit_images.visit_id = visits.id 
-												LEFT JOIN shops ON visits.shop_id = shops.shop_id 
-												LEFT JOIN district on shops.district = district.id 
-											WHERE visits.date $query_date_range 
-												$query_manager_2 
-												$query_region_select 
-												$query_district_select 
-												$query_shop_select 
-											GROUP by visit_images.visit_id 
-											ORDER by visits.date DESC";
+									$manager_id = $array_visits['manager_id'];
 								}
-								// echo $sql;die;
-								$query = mysqli_query($con, $sql);
+								$date = $array_visits['date'];
+								$comment = $array_visits['comment'];
+								$visit_id = $array_visits['v_id'];
+								$latitude = $array_visits['latitude'];
+								$longitude = $array_visits['longitude'];
+								$district_name = $array_visits['district_name'];
 
-								while ($array_visits = mysqli_fetch_array($query)):
-									$shop_id = $array_visits['shop_id'];
-									if($not_photo == 'on'){
-										$manager_id = $manager_id_selected;
-									}else{
-										$manager_id = $array_visits['manager_id'];
-									}
-									$date = $array_visits['date'];
-									$comment = $array_visits['comment'];
-									$visit_id = $array_visits['v_id'];
-									$latitude = $array_visits['latitude'];
-									$longitude = $array_visits['longitude'];
-									$district_name = $array_visits['district_name'];
-
-									
-									$query_shop = mysqli_query($con, "SELECT static_manager, qr_id, name, address, shop_latitude, shop_longitude, district FROM shops WHERE shop_id='$shop_id' ");
-									$array_shop = mysqli_fetch_array($query_shop);
-									
-									$shop_qr_id = $array_shop['qr_id'];
-									$shop_name = $array_shop['name'];
-									$shop_address = $array_shop['address'];
-									$static_manager_curr = $array_shop['static_manager'];
-									$shop_latitude = $array_shop['shop_latitude'];
-									$shop_longitude = $array_shop['shop_longitude'];
-									
-									$shop_district_id = $array_shop['district'];
-									
-									$query_manager = mysqli_query($con, "SELECT manager.login AS manager_login, client.law_name AS client_name from manager, client WHERE manager.id='$static_manager_curr' AND manager.client_id = client.id ");
-									$array_manager = mysqli_fetch_array($query_manager);					
+								$guyqi_dirq = $array_visits['guyqi_dirq'];
+								$guyqi_vijak = $array_visits['guyqi_vijak'];
+								$apranqi_dasavorutyun = $array_visits['apranqi_dasavorutyun'];
+								$tesakanu_arkayutyun = $array_visits['tesakanu_arkayutyun'];
+								$xanuti_verabermunq = $array_visits['xanuti_verabermunq'];
+								$vajarqi_dinamika = $array_visits['vajarqi_dinamika'];
+								$marqetingi_anhrajeshtutyun = $array_visits['marqetingi_anhrajeshtutyun'];
+								$apranqi_jamket = $array_visits['apranqi_jamket'];
+								$apranqi_qanakutyun = $array_visits['apranqi_qanakutyun'];
+								
+								$query_shop = mysqli_query($con, "SELECT static_manager, qr_id, name, address, shop_latitude, shop_longitude, district FROM shops WHERE shop_id='$shop_id' ");
+								$array_shop = mysqli_fetch_array($query_shop);
+								
+								$shop_qr_id = $array_shop['qr_id'];
+								$shop_name = $array_shop['name'];
+								$shop_address = $array_shop['address'];
+								$static_manager_curr = $array_shop['static_manager'];
+								$shop_latitude = $array_shop['shop_latitude'];
+								$shop_longitude = $array_shop['shop_longitude'];
+								
+								$shop_district_id = $array_shop['district'];
+								
+								$query_manager = mysqli_query($con, "SELECT manager.login AS manager_login, client.law_name AS client_name from manager, client WHERE manager.id='$static_manager_curr' AND manager.client_id = client.id ");
+								$array_manager = mysqli_fetch_array($query_manager);					
 							?>				  
-						<tr>				  
-							<td><?php echo $shop_id; ?></td>
-							<td class="word_break"><?php echo $shop_qr_id; ?></td>
-							<td><?php echo $shop_name; ?></td>
-							<td><?php echo $shop_address; ?></td>
-							<td>
-								<?php
-									if($not_photo == 'on'){
-										$array_district = mysqli_fetch_array(mysqli_query($con, "SELECT district_name FROM district WHERE id = '$shop_district_id' "));
-										echo $array_district['district_name'];
-									}else{
-										echo $district_name;
-									}
-								?>				 
-				 			</td>
-							<td><?php echo $array_manager['manager_login']; ?></td>
-							<td><?php echo $array_manager['client_name']; ?></td>
-							<td><?php echo $date; ?></td>
-							<td>				 
-								<?php 
-									if($not_photo != 'on'){				 
-										if($shop_latitude != ''){
-											$km = getDistanceBetweenPointsNew($latitude, $longitude, $shop_latitude, $shop_longitude, $unit = 'Km');
-											$km2 = getDistanceBetweenPointsNew($latitude, $longitude, $shop_latitude, $shop_longitude, $unit = 'Km');
-											if($_SESSION['role']!= '1' ){
-												echo $km;
-											}
-											echo " ";
-											$km = intval($km);
-											if($km <= 100 or $km2 == 'NAN'){
-												echo "<i class='fa fa-check' style='color:#28a745'>";
-											}else{
-												echo "<i class='fa fa-times' style='color:#bd2130'>";
-											}
+							<tr>				  
+								<td><?php echo $shop_id; ?></td>
+								<td class="word_break"><?php echo $shop_qr_id; ?></td>
+								<td><?php echo $shop_name; ?></td>
+								<td><?php echo $shop_address; ?></td>
+								<td>
+									<?php
+										if($not_photo == 'on'){
+											$array_district = mysqli_fetch_array(mysqli_query($con, "SELECT district_name FROM district WHERE id = '$shop_district_id' "));
+											echo $array_district['district_name'];
+										}else{
+											echo $district_name;
 										}
-									}
-								?>				 
-							</td>
-							<td>				 
-								<!-- <?php				 
-								if($not_photo != 'on'){
-									$query_images = mysqli_query($con, "SELECT * FROM visit_images WHERE visit_id = '$visit_id' ");
-									while($array_images = mysqli_fetch_array($query_images)){
-										$img_name = $array_images['image'];
-										echo "<a href='/api/mobile/upload/$img_name' target='_blank'><img src='/api/mobile/upload/$img_name' height='50' width='50'></a>";
-									}
-								}				 
-								?>			  -->
-							</td>				 
-							<td>				 
-								<?php 
-									$query_comment = mysqli_query($con, "SELECT comment FROM visits WHERE id = '$visit_id' ");
-									$array_comment = mysqli_fetch_array($query_comment);
-									// echo $array_comment['comment'];
-									if($not_photo != 'on'):
-								?>				 
-								<textarea id="comment_input_<?php echo $visit_id; ?>" data-visitid="<?php echo $visit_id; ?>" class="form-control visit_comment"><?php  echo $array_comment['comment']; ?></textarea>				 
-								<?php endif; ?>				 
-							</td>				 
-							<td style="width:150px;">								
-								<button visit_id="<?php echo $visit_id; ?>" manager_id="<?php echo $manager_id ; ?>" task_text="<?php echo $shop_address.'->'.$shop_name  ; ?>" class="btn btn-secondary btn-sm add_task_from_comment" style="color:#fff" title="Ստեղծել առաջադրանք"><i class='fa fa-tasks'></i></button>
-
-								<?php if($not_photo != 'on'): ?>				 
-									<button style="width: 33px;" class="btn btn-primary btn-sm rounded-0 save_coordinates after_<?php echo $visit_id; ?>"  data-lat="<?php echo $latitude; ?>" data-long="<?php echo $longitude; ?>" data-curshop="<?php echo $shop_id; ?>" data-visitid="<?php echo $visit_id; ?>" title="Պահպանել կոորդինատները"><i class="fas fa-save"></i></button>
-									<a href="#"style="width: 33px;" data-toggle="modal" data-target="#map<?php echo $visit_id; ?>"  class="btn btn-warning btn-sm rounded-0 delete_client_button" title="Դիտել"><i class="fas fa-map-marker-alt"></i></a>							
-									<!-- Modal -->
-									<div class="modal fade" id="map<?php echo $visit_id; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-										<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-											<div class="modal-content">
-											<div class="modal-header">
-												<h5 class="modal-title" id="exampleModalLongTitle">N<?php echo $visit_id; ?>աուդիտի քարտեզը</h5>
-												<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-												<span aria-hidden="true">&times;</span>
-												</button>
+									?>				 
+								</td>
+								<td><?php echo $array_manager['manager_login']; ?></td>
+								<td><?php echo $array_manager['client_name']; ?></td>
+								<?php if($not_photo != 'on'): ?>
+									<td><?php echo $date; ?></td>
+									<td>				 
+										<?php 				 
+											if($shop_latitude != ''){
+												$km = getDistanceBetweenPointsNew($latitude, $longitude, $shop_latitude, $shop_longitude, $unit = 'Km');
+												$km2 = getDistanceBetweenPointsNew($latitude, $longitude, $shop_latitude, $shop_longitude, $unit = 'Km');
+												if($_SESSION['role']!= '1' ){
+													echo $km;
+												}
+												echo " ";
+												$km = intval($km);
+												if($km <= 100 or $km2 == 'NAN'){
+													echo "<i class='fa fa-check' style='color:#28a745'>";
+												}else{
+													echo "<i class='fa fa-times' style='color:#bd2130'>";
+												}
+											}
+										?>				 
+									</td>
+									<td>				 
+										<?php
+											$query_images = mysqli_query($con, "SELECT * FROM visit_images WHERE visit_id = '$visit_id' ");
+											while($array_images = mysqli_fetch_array($query_images)){
+												$img_name = $array_images['image'];
+												echo "<a href='/api/mobile/upload/$img_name' target='_blank'><img src='/api/mobile/upload/$img_name' height='50' width='50'></a>";
+											}				 
+										?>
+									</td>
+									<td><?php  echo (int)$guyqi_dirq   ;?></td>
+									<td><?php  echo (int)$guyqi_vijak ;?></td>
+									<td><?php  echo (int)$apranqi_dasavorutyun ;?></td>
+									<td><?php  echo (int)$tesakanu_arkayutyun ;?></td>
+									<td><?php  echo (int)$xanuti_verabermunq ;?></td>
+									<td><?php  echo (int)$vajarqi_dinamika ;?></td>
+									<td><?php  echo (int)$marqetingi_anhrajeshtutyun ;?></td>
+									<td><?php  echo (int)$apranqi_jamket ;?></td>
+									<td><?php  echo (int)$apranqi_qanakutyun ;?></td>
+									<td>				 
+										<?php 
+											$query_comment = mysqli_query($con, "SELECT comment FROM visits WHERE id = '$visit_id' ");
+											$array_comment = mysqli_fetch_array($query_comment);
+										?>				 
+										<textarea id="comment_input_<?php echo $visit_id; ?>" data-visitid="<?php echo $visit_id; ?>" class="form-control visit_comment"><?php  echo $array_comment['comment']; ?></textarea>				 				
+									</td>				 
+									<td style="width:150px;">								
+										<button visit_id="<?php echo $visit_id; ?>" manager_id="<?php echo $manager_id ; ?>" task_text="<?php echo $shop_address.'->'.$shop_name  ; ?>" class="btn btn-secondary btn-sm add_task_from_comment" style="color:#fff" title="Ստեղծել առաջադրանք"><i class='fa fa-tasks'></i></button>			 
+										<button style="width: 33px;" class="btn btn-primary btn-sm rounded-0 save_coordinates after_<?php echo $visit_id; ?>"  data-lat="<?php echo $latitude; ?>" data-long="<?php echo $longitude; ?>" data-curshop="<?php echo $shop_id; ?>" data-visitid="<?php echo $visit_id; ?>" title="Պահպանել կոորդինատները"><i class="fas fa-save"></i></button>
+										<a href="#"style="width: 33px;" data-toggle="modal" data-target="#map<?php echo $visit_id; ?>"  class="btn btn-warning btn-sm rounded-0 delete_client_button" title="Դիտել"><i class="fas fa-map-marker-alt"></i></a>							
+										<!-- Modal -->
+										<div class="modal fade" id="map<?php echo $visit_id; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+											<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+												<div class="modal-content">
+												<div class="modal-header">
+													<h5 class="modal-title" id="exampleModalLongTitle">N<?php echo $visit_id; ?>աուդիտի քարտեզը</h5>
+													<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<div class="modal-body">
+													<iframe  width="100%" height="350" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q=<?php echo $latitude; ?>,<?php echo $longitude; ?>&hl=es&z=14&amp;output=embed"></iframe>								
+												</div>
+												<div class="modal-footer">
+													<button type="button" class="btn btn-secondary" data-dismiss="modal">Փակել</button>
+												</div>
+												</div>
 											</div>
-											<div class="modal-body">
-												<iframe  width="100%" height="350" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q=<?php echo $latitude; ?>,<?php echo $longitude; ?>&hl=es&z=14&amp;output=embed"></iframe>								
-											</div>
-											<div class="modal-footer">
-												<button type="button" class="btn btn-secondary" data-dismiss="modal">Փակել</button>
-											</div>
-											</div>
-										</div>
-									</div>
-								<?php  endif; ?>					
-					 		</td>      
-                  		</tr>                
-                 			<?php endwhile; ?>				 
+										</div>			
+									</td>
+								<?php endif; ?>
+							</tr>                
+						<?php endwhile; ?>				 
 					</tbody>
 					<tfoot>
 						<tr>
@@ -359,42 +392,38 @@
 							<th>Շրջան</th>
 							<th>Մենեջեր</th>
 							<th>Գործընկեր</th>
-							<th>Ժամանակ</th>
-							<th>Ռադիուս</th>
-							<th>Նկարներ</th>
-							<th>Մեկնաբանություն</th>
-							<th>Քարտեզ</th>
+							<?php if($not_photo != 'on'): ?>
+								<th>Ժամանակ</th>
+								<th>Ռադիուս</th>
+								<th>Նկարներ</th>								
+								<th></th>
+								<th></th>
+								<th></th>
+								<th></th>
+								<th></th>
+								<th></th>
+								<th></th>
+								<th></th>
+								<th></th>
+								<th>Մեկնաբանություն</th>
+								<th>Քարտեզ</th>
+							<?php endif; ?>
 						</tr>
 					</tfoot>
 				</table>
-
               </div>
-              <!-- /.card-body -->
             </div>
-            <!-- /.card -->
           </div>
-          <!-- /.col -->
         </div>
-        <!-- /.row -->
       </div>
-      <!-- /.container-fluid -->
     </section>
-    <!-- /.content -->
-  </div>
-  <!-- /.content-wrapper -->
-<?php 
-
-include 'footer.php';
-
-?>
-
-  <!-- Control Sidebar -->
-  <aside class="control-sidebar control-sidebar-dark">
-    <!-- Control sidebar content goes here -->
-  </aside>
-  <!-- /.control-sidebar -->
+  	</div>
+	<?php 
+		include 'footer.php';
+	?>
+	<aside class="control-sidebar control-sidebar-dark">
+	</aside>
 </div>
-<!-- ./wrapper -->
 
 <!-- jQuery -->
 <script src="../../plugins/jquery/jquery.min.js"></script>
@@ -584,7 +613,33 @@ $("#click_delete").click(function() {
 	
 
 $(function () {
-    var table = $("#example1").DataTable({		
+    var table = $("#example1").DataTable({
+		<?php if($not_photo != 'on'): ?>
+			columnDefs: [{
+				targets: [10,11,12,13,14,15,16,17,18],
+				createdCell: function (td, cellData, rowData, row, col) {					
+					switch(cellData){
+						case '1':
+							$(td).html('<span class="fa fa-star checked_star"></span><span class="fa fa-star text-muted"></span><span class="fa fa-star text-muted"></span><span class="fa fa-star text-muted"></span><span class="fa fa-star text-muted"></span>')
+							break;
+						case '2':
+							$(td).html('<span class="fa fa-star checked_star"></span><span class="fa fa-star checked_star"></span><span class="fa fa-star text-muted"></span><span class="fa fa-star text-muted"></span><span class="fa fa-star text-muted"></span>')
+							break;
+						case '3':
+							$(td).html('<span class="fa fa-star checked_star"></span><span class="fa fa-star checked_star"></span><span class="fa fa-star checked_star"></span><span class="fa fa-star text-muted"></span><span class="fa fa-star text-muted"></span>')
+							break;
+						case '4':
+							$(td).html('<span class="fa fa-star checked_star"></span><span class="fa fa-star checked_star"></span><span class="fa fa-star checked_star"></span><span class="fa fa-star checked_star"></span><span class="fa fa-star text-muted"></span>')
+							break;
+						case '5':
+							$(td).html('<span class="fa fa-star checked_star"></span><span class="fa fa-star checked_star"></span><span class="fa fa-star checked_star"></span><span class="fa fa-star checked_star"></span><span class="fa fa-star checked_star"></span>')
+							break;
+						default:
+							$(td).html('<span class="fa fa-star" style="color:	#dadada"></span><span class="fa fa-star"  style="color:	#dadada"></span><span class="fa fa-star"  style="color:	#dadada"></span><span class="fa fa-star"  style="color:	#dadada"></span><span class="fa fa-star"  style="color:	#dadada"></span>')
+					}
+				}
+			}],
+        <?php  endif ; ?>		
 		initComplete: function () {
             this.api().columns().every( function () {
                 var column = this;

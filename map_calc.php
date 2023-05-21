@@ -29,166 +29,119 @@ if(isset($_GET['datebeet'])){
 
 ?>
 
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1>GPS հաշվարկներ</h1>
-          </div>
-          <div class="col-sm-6 d-flex justify-content-end">
-          </div>
-        </div>
-      </div><!-- /.container-fluid -->
-    </section>
-
-    <!-- Main content -->
+<div class="content-wrapper">
+	<section class="content-header">
+		<div class="container-fluid">
+			<div class="row mb-2">
+				<div class="col-sm-6">
+					<h1>GPS հաշվարկներ</h1>
+				</div>
+				<div class="col-sm-6 d-flex justify-content-end">
+					<a href="/dashboard.php" class="btn btn-info"><i class="fa fa-window-close"></i></a>
+				</div>
+			</div>
+		</div>
+	</section>
     <section class="content">
       <div class="container-fluid">
         <div class="row">
           <div class="col-12">
-      
-
             <div class="card">
-              <div class="card-header">
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">			  
-			  
-				 <form action="/map_calc.php" id="visits"> 
-				  <div class="form-row">
-				  
-				 <div class="form-group col-md-3">
-                  <label>Ժամանակահատված</label>
-
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="far fa-calendar-alt"></i>
-                      </span>
-                    </div>
-                    <input type="text" class="form-control float-right" id="reservation" value="<?php echo $datebeet; ?>" name="datebeet">
-                  </div>
-                  <!-- /.input group -->
-                </div>
-                <!-- /.form group -->
-				
-			
-			
-				  <div class="form-group col-md-2">
-					<label for="login">Աշխատակից</label>
-					<select name="manager_select" id="manager_select" class="form-control">
-					<option value="0"> Ընտրել </option>
-						<?php 
-
-							$query_manager = mysqli_query($con, "SELECT * FROM manager WHERE user_role = '1' or user_role = '5' ORDER by id DESC");
-
-							while ($array_manager = mysqli_fetch_array($query_manager)):
-							$manager_id = $array_manager['id'];
-							$manager_login = $array_manager['login'];
-						?> 
-						 
-						<option value="<?php echo $manager_id; ?>"  <?php if($manager_id_selected == $manager_id ) {echo "selected"; } ?> > <?php echo $manager_login; ?></option>
-						
-						<?php endwhile; ?>
-						
-					</select>
-			
-					</div>
-				
-				
-				
-					  
-					 <div class="form-group col-md-1">
-								<label for="login"> </label>
-								<button type="submit" class="btn btn-success">Ցուցադրել</button>
-					  </div>
+				<div class="card-header">
 				</div>
-				  </form>
+              	<div class="card-body">			  
+					<form action="/map_calc.php" id="visits"> 
+						<div class="form-row">				  
+							<div class="form-group col-md-3">
+								<label>Ժամանակահատված</label>
+								<div class="input-group">
+									<div class="input-group-prepend">
+										<span class="input-group-text">
+											<i class="far fa-calendar-alt"></i>
+										</span>
+									</div>
+									<input type="text" class="form-control float-right" id="reservation" value="<?php echo $datebeet; ?>" name="datebeet">
+								</div>
+							</div>
+							<div class="form-group col-md-2">
+								<label for="login">Աշխատակից</label>
+								<select name="manager_select" id="manager_select" class="form-control">
+								<option value="0"> Ընտրել </option>
+								<?php 
+								$query_manager = mysqli_query($con, "SELECT * FROM manager WHERE user_role = '1' or user_role = '5' ORDER by id DESC");
 
-                <table id="example1" class="table table-bordered table-striped" style="width: 100%">
-                  <thead>
-                  <tr>
-                   <th class="select-filter">ID</th>
-					<th class="select-filter">Աշխատակից</th>
-                    <th class="select-filter">Ժամանակ</th>
-					<th class="">Փաստացի կմ</th>
-					<th class="">Նախնական կմ</th>
-					<th class="">Արժեք</th>
-					<th class="">Տարբերություն կմ</th>
-					<th class="select-filter">Մեկնաբանություն</th>
-					<th class="select-filter">Ջնջել</th>
+								while ($array_manager = mysqli_fetch_array($query_manager)):
+								$manager_id = $array_manager['id'];
+								$manager_login = $array_manager['login'];
+								?> 
+								<option value="<?php echo $manager_id; ?>"  <?php if($manager_id_selected == $manager_id ) {echo "selected"; } ?> > <?php echo $manager_login; ?></option>
 
-					</tr>
-                  </thead>
-                  <tbody id="visits_body">
-				<?php 
-					if($datebeet !=''){
-						$query = mysqli_query($con, "SELECT *, maps.id as map_id FROM maps LEFT JOIN manager on maps.map_manager_id = manager.id WHERE 1=1 $query_date_range $query_manager_select");
-					}
-					while($maps_array = mysqli_fetch_array($query)):
-					
-				?>
-					<tr> 
-						<td><?php echo $maps_array['map_id']; ?></td>
-						<td><?php echo $maps_array['login']; ?></td>
-						<td><?php echo $maps_array['map_date']; ?></td>
-						<td style="font-weight: bold;"><?php echo $maps_array['map_real_km']; ?></td>
-						<td><?php echo $maps_array['map_fake_km']; ?></td>
-						<td><?php echo $maps_array['map_km_cost']; ?></td>
-						<td><?php echo $maps_array['map_km_dif']; ?></td>
-						<td><textarea class="map_comment_edit" data-id="<?php echo $maps_array['map_id']; ?>"><?php echo $maps_array['map_comment']; ?> </textarea> </td>
-						<td>						<a href="#" id="<?php echo $maps_array['map_id']; ?>" class="btn btn-danger btn-sm rounded-0 delete_client_button" data-toggle="modal" data-target="#deletemodal"  title="Ջնջել"><i class="fa fa-trash"></i></a>
-</td>
-					</tr>
-					<?php endwhile; ?>
-				</tbody>
-                  <tfoot>
-                  <tr>
-                   <th class="select-filter">ID</th>
-					<th class="select-filter">Աշխատակից</th>
-                    <th class="select-filter">Ժամանակ</th>
-					<th class="">Փաստացի կմ</th>
-					<th class="">Նախնական կմ</th>
-					<th class="">Արժեք</th>
-					<th class="">Տարբերություն կմ</th>
-					<th class="select-filter">Մեկնաբանություն</th>
-					<th class="select-filter">Ջնջել</th>
-
-
-
-
-                  </tr>
-                  </tfoot>
-                </table>
-		
-			 
-			
-		
-
-
-  
-
-
-
-
-
-              </div>
-              <!-- /.card-body -->
+								<?php endwhile; ?>
+								</select>
+							</div>
+							<div class="form-group col-md-1" style="max-width:150px;display: flex;  flex-direction:column;  justify-content:flex-end;">
+								<button type="submit" class="btn btn-success">Ցուցադրել</button>
+							</div>
+						</div>
+					</form>
+					<table id="example1" class="table table-bordered table-striped" style="width: 100%">
+						<thead>
+							<tr>
+								<th class="select-filter">ID</th>
+								<th class="select-filter">Աշխատակից</th>
+								<th class="select-filter">Ժամանակ</th>
+								<th class="">Փաստացի կմ</th>
+								<th class="">Նախնական կմ</th>
+								<th class="">Արժեք</th>
+								<th class="">Տարբերություն կմ</th>
+								<th class="select-filter">Մեկնաբանություն</th>
+								<th class="select-filter">Ջնջել</th>
+							</tr>
+						</thead>
+						<tbody id="visits_body">
+							<?php 
+								if($datebeet !=''):
+									$query = mysqli_query($con, "SELECT *, maps.id as map_id FROM maps LEFT JOIN manager on maps.map_manager_id = manager.id WHERE 1=1 $query_date_range $query_manager_select");
+								
+									while($maps_array = mysqli_fetch_array($query)): ?>
+										<tr> 
+											<td><?php echo $maps_array['map_id']; ?></td>
+											<td><?php echo $maps_array['login']; ?></td>
+											<td><?php echo $maps_array['map_date']; ?></td>
+											<td style="font-weight: bold;"><?php echo $maps_array['map_real_km']; ?></td>
+											<td><?php echo $maps_array['map_fake_km']; ?></td>
+											<td><?php echo $maps_array['map_km_cost']; ?></td>
+											<td><?php echo $maps_array['map_km_dif']; ?></td>
+											<td><textarea class="map_comment_edit" data-id="<?php echo $maps_array['map_id']; ?>"><?php echo $maps_array['map_comment']; ?> </textarea> </td>
+											<td><a href="#" id="<?php echo $maps_array['map_id']; ?>" class="btn btn-danger btn-sm rounded-0 delete_client_button" data-toggle="modal" data-target="#deletemodal"  title="Ջնջել"><i class="fa fa-trash"></i></a>
+											</td>
+										</tr>
+							<?php 
+									endwhile; 
+								endif;
+							?>
+						</tbody>
+						<tfoot>
+							<tr>
+								<th class="select-filter">ID</th>
+								<th class="select-filter">Աշխատակից</th>
+								<th class="select-filter">Ժամանակ</th>
+								<th class="">Փաստացի կմ</th>
+								<th class="">Նախնական կմ</th>
+								<th class="">Արժեք</th>
+								<th class="">Տարբերություն կմ</th>
+								<th class="select-filter">Մեկնաբանություն</th>
+								<th class="select-filter">Ջնջել</th>
+							</tr>
+						</tfoot>
+					</table>
+              	</div>
             </div>
-            <!-- /.card -->
           </div>
-          <!-- /.col -->
         </div>
-        <!-- /.row -->
       </div>
-      <!-- /.container-fluid -->
     </section>
-    <!-- /.content -->
-  </div>
-  <!-- /.content-wrapper -->
+</div>
 <?php 
 
 include 'footer.php';
