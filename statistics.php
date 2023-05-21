@@ -659,11 +659,8 @@ $('.add_task_from_comment').on('click', function(){
            {
 			   location.reload()
 
-           }
-		   
+           }		   
          });
-    
-
 })
 
 $( "#region" ).change(function() {
