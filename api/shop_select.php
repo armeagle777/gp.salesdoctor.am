@@ -231,6 +231,42 @@ if(isset($_POST['type']) AND $_POST['type'] == 'add_order'){
 }
 
 
+if(isset($_POST['type']) AND $_POST['type'] == 'add_pre_order'){
+    try {
+    $product_group = mysqli_real_escape_string($con, $_POST['product_group_add']);
+    $order_start_date = strtotime(mysqli_real_escape_string($con, $_POST['order_start_date']));
+    $manager_id = mysqli_real_escape_string($con, $_POST['manager_id']);
+    $comment = mysqli_real_escape_string($con, $_POST['comment']);
+    $order_type = mysqli_real_escape_string($con, $_POST['order_type']);
+    $order_sum = mysqli_real_escape_string($con, $_POST['order_summ']);
+    $products = json_decode($_POST['product'], true);
+    $courier_select =mysqli_real_escape_string($con, $_POST['courier_select']);
+    $create_id = time().rand(10000, 99999);
+    foreach ($products as $value) {
+
+        $prod_id = $value['prod_id'];
+        $prod_count = $value['prod_count'];
+        $product_procent = $value['prod_procent'];
+        $product_cost = $value['prod_cost'];
+        $sql = "INSERT INTO pre_order (product_group,order_start_date,manager_id,order_type,order_sum,courier_select,prod_id,prod_count,product_procent,product_cost,create_id)VALUES ('$product_group', '$order_start_date', '$manager_id', '$order_type', '$order_sum', '$courier_select', '$prod_id', '$prod_count', '$product_procent', '$product_cost','$create_id');";
+        $query_insert = mysqli_query($con ,$sql);
+    }
+    if($comment){
+        $user_id = $_SESSION['user_id'];
+        $sql = "INSERT INTO comment (whereis,who,text_comment,comment_id) VALUES ('pre_order',' $user_id','$comment','$create_id')";
+        mysqli_query($con ,$sql);
+    }
+        echo "true";exit;
+    } catch (Exception $e) {
+        echo "false";exit;
+    }
+
+    //$pr_orders_document = mysqli_query($con, "INSERT INTO pr_orders_document (document_id, document_date, order_summ, order_last_summ, shop_id, manager_id, pay_type, order_type, debt_date, product_group, order_comment, static_manager, courier_id) VALUES ('$document_id','$document_date','$order_summ','$order_summ','$shop_id', '$manager_id', '$pay_type', '$order_type', '$debt_date', '$product_group', '$comment', '$static_manager', '$static_courier')");
+    //echo  "INSERT INTO pr_orders_document (document_id, document_date, order_summ, shop_id, manager_id, pay_type, order_type, debt_date, product_group, order_comment, static_manager) VALUES ('$document_id','$document_date','$order_summ','$shop_id', '$manager_id', '$pay_type', '$order_type', '$debt_date', '$product_group', '$comment', '$static_manager')";
+}
+
+
+
 if(isset($_POST['action']) AND $_POST['action'] == 'get_shop_order_limit'){
 		
 		$shop_id = mysqli_real_escape_string($con, $_POST['shop_id']);
@@ -268,6 +304,85 @@ if(isset($_POST['action']) AND $_POST['action'] == 'get_shop_order_limit'){
 
 		echo json_encode($shop_details);
 	
+}
+
+
+if (isset($_POST['action']) and $_POST['action'] == 'add_payment') {
+
+    if ($_POST['setsum'] >= $_POST['sum']) {
+        if (!$_POST['setsum'] || !$_POST['courier_select'] || !$_POST['manager_id'] || !$_POST['date'] || !$_POST['pre_uniq_id']) {
+            echo "false";
+            exit;
+        }
+    }
+            try {
+                $sum = $_POST['setsum'];
+				$order_sum=$_POST['sum'];
+				$newordersum=$order_sum-$sum;
+                $courier_select = $_POST['courier_select'];
+                $menager_id = $_POST['manager_id'];
+                $date_payment =$_POST['date'];
+                $pre_uniq_id = $_POST['pre_uniq_id'];
+				$comment = $_POST['comment'];
+                $sql = "INSERT INTO pre_order_payments (sumes,courier_select,menager_id,date_payment,pre_uniq_id,comment)VALUES ('$sum','$courier_select','$menager_id','$date_payment','$pre_uniq_id','$comment');";
+                $query_insert = mysqli_query($con, $sql);
+                $sqlupdate = "UPDATE pre_order SET order_sum='$newordersum', status = '1' WHERE create_id='$pre_uniq_id'";
+                $query_update = mysqli_query($con, $sqlupdate);
+                    echo "true";
+                    exit;
+                }
+            catch(Exception $e) {
+                    echo "false";
+                    exit;
+                }
+
+
+}
+if (isset($_POST['action']) and $_POST['action'] == 'updatepre') {
+    $id = $_POST['id'];
+	$value = $_POST['value'];
+	$sql = "SELECT product_cost,prod_count,create_id,order_sum,prod_id,courier_select FROM pre_order WHERE id = '$id' ";
+	$query_select = mysqli_query($con, $sql);
+	$product_cost = mysqli_fetch_array($query_select);
+	$create_id =$product_cost['create_id'];
+    $prodid = $product_cost['prod_id'];
+    $courier_select = $product_cost['courier_select'];
+	$product_cost = ((int)$product_cost['product_cost']/(int)$product_cost['prod_count'])*(int)$value;
+
+    if((int)$product_cost['prod_count'] == 0){
+
+			    $prodidsql = "SELECT sale_price FROM pr_products WHERE id = '$prodid'";
+				$prodidquery_select = mysqli_query($con, $prodidsql);
+				$prodid = mysqli_fetch_array($prodidquery_select);
+			    $prod_id_sale_price = $prodid['sale_price'];
+
+				$courier_selectdsql = "SELECT percent FROM manager WHERE id = '$courier_select' ";
+				$courier_selectquery_select = mysqli_query($con, $courier_selectdsql);
+				$courier_select = mysqli_fetch_array($query_select);
+				$courier_select_percent = $courier_select['percent'];
+
+				if((int)$courier_select['percent'] != null){
+				 $product_cost = ($prod_id_sale_price -(($courier_select_percent * $prod_id_sale_price)/100))*$value;
+				}else{
+				 $product_cost =  $prod_id_sale_price * $value;
+				}
+
+	}
+
+
+	$sqlupdate = "UPDATE pre_order SET prod_count = '$value' WHERE id='$id'";
+	$query_update = mysqli_query($con, $sqlupdate);
+
+	$sqlsum = "SELECT SUM(product_cost) FROM pre_order WHERE create_id = '$create_id' ";
+	$query_selectsum = mysqli_query($con, $sqlsum);
+	$product_costsum = mysqli_fetch_array($query_selectsum);
+//	print_r($product_costsum);die;
+	$product_costsum = $product_costsum[0];
+    $sql_update_order_sumes = "UPDATE pre_order SET order_sum='$product_costsum' WHERE create_id='$create_id'";
+	$query_update_order_sum = mysqli_query($con, $sql_update_order_sumes);
+
+
+	echo "true";
 }
 
 
