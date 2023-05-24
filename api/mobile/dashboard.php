@@ -1,5 +1,6 @@
 <?php
-print_r($_POST);
+$user_id=mysqli_real_escape_string($con, $_GET['user_id']);
+echo $user_id;
 // session_start();
 
 // if($_SESSION['user_role'] == 1){

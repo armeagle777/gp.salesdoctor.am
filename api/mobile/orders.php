@@ -1,9 +1,8 @@
 <?php require '../db.php'; ?>
 
 <?php 
-print_r($_POST);
-print_r($_GET);
-die;
+$user_id=mysqli_real_escape_string($con, $_GET['user_id']);
+echo $user_id;die;
 $order_type = 1;
 
 $curr_warehouse_id = mysqli_real_escape_string($con, $_GET['warehouse_id']);
