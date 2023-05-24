@@ -1,3 +1,4 @@
+<?php require '../db.php'; ?>
 <?php
 $user_id=$_GET['user_id'];
 $sql = "SELECT * FROM manager WHERE id=$user_id";
