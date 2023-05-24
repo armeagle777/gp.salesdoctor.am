@@ -1,5 +1,5 @@
 <?php
-print_r($_GET);
+print_r($_POST);
 // session_start();
 
 // if($_SESSION['user_role'] == 1){
