@@ -124,7 +124,7 @@ if($start_date != $end_date){
   <!-- summernote -->
   <link rel="stylesheet" href="../../../plugins/summernote/summernote-bs4.css">
   <!-- Custom css -->
-  <link rel="stylesheet" href="plugins/custom_style.css">
+  <link rel="stylesheet" href="../../../plugins/custom_style.css">
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
   
@@ -282,7 +282,7 @@ input[readonly] {
               </div>
               <!-- /.card-header -->
               <div class="card-body">
-				 <form action="/warehouse_orders.php" id="statistics_form"> 
+				 <form action="/api/mobile/orders.php" id="statistics_form"> 
 				  <div class="form-row">
 				 <div class="form-group col-md-3">
                   <label>Ժամանակահատված</label>
@@ -544,9 +544,7 @@ input[readonly] {
                 						$query_manager_select 
                 						$query_group_selected 
                 						$query_courier_select";
-					}else{
-						$query = '';
-					}
+					
 					
 					$query_order_documents = mysqli_query($con, $query);
 					while($warehouse_order_array = mysqli_fetch_array($query_order_documents)):
@@ -624,7 +622,7 @@ input[readonly] {
 					<td><?php echo $document_id; ?></td>
 				  </tr>
 			        <?php endwhile; ?>
-				 
+					<?php } ?>
                   </tbody>
                   <tfoot>
                   <tr>
