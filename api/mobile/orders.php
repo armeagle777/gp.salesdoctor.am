@@ -1,6 +1,9 @@
 <?php include 'api/db.php'; ?>
 
 <?php 
+print_r($_POST);
+print_r($_GET);
+die;
 $order_type = 1;
 
 $curr_warehouse_id = mysqli_real_escape_string($con, $_GET['warehouse_id']);
