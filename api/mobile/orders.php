@@ -1,4 +1,3 @@
-<?php include 'header.php'; ?>
 <?php include 'api/db.php'; ?>
 
 <?php 
