@@ -483,7 +483,7 @@ input[readonly] {
                   <tbody>
 				  
 				  <?php 
-					if($datebeet !=''){
+					if($datebeet !=''):
 						$query =   "SELECT *, 
 						                M.name AS manager_name,
 						                C.name AS courier_name,
@@ -511,9 +511,7 @@ input[readonly] {
                 						$query_manager_select 
                 						$query_group_selected 
                 						$query_courier_select";
-					}else{
-						$query = '';
-					}
+					
 					
 					$query_order_documents = mysqli_query($con, $query);
 					while($warehouse_order_array = mysqli_fetch_array($query_order_documents)):
@@ -591,7 +589,7 @@ input[readonly] {
 					<td><?php echo $document_id; ?></td>
 				  </tr>
 			        <?php endwhile; ?>
-				 
+				 <?php endif; ?>
                   </tbody>
                   <tfoot>
                   <tr>

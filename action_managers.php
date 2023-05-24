@@ -225,7 +225,7 @@
 						<input value='on' type="checkbox" class="active" id="canRecord" name="canRecord" <?php if($canRecord=='1'){echo "checked";} ?>>
 					  </div>
 
-					<?php if($user_role == '1'):  ?>	
+						
 						
 					  <div class="form-group col-md-12 label_audit">
 						<label for="name">Աուդիտ</label>
@@ -246,7 +246,7 @@
 					  </div>
 					  
 					  
-					  
+					  <?php if($user_role == '1'):  ?>
 					  <div class="form-row col-md-12 money_plan">
 						
 						<div class="form-group col-md-12 ">

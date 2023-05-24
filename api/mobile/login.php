@@ -1,6 +1,7 @@
 <?php
 $SERVERS = array(
-    'api' => 'http://salesdoctor.am/api/mobile/',
+    'api' => 'http://gp.salesdoctor.am/api/mobile/',
+    // 'api' => 'http://salesdoctor.am/api/mobile/',
     'other' => array(
         'http://gp.salesdoctor.am/api/mobile/',
         'http://1.salesdoctor.am/api/mobile/',
