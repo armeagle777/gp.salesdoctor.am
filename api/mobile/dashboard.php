@@ -1,12 +1,14 @@
 <?php
 $user_id=$_GET['user_id'];
-echo $user_id;
-// session_start();
+$sql = "SELECT * FROM manager WHERE id=$user_id";
+$res = mysqli_query($con, $sql);
+$row = mysqli_fetch_assoc($res);
+extract($row);
 
-// if($_SESSION['user_role'] == 1){
-//     header("Location: /pr_new_order.php ");
-// }else{
-//   header("Location: /pr_finance.php ");
-// }
+if($user_role == 1){
+    header("Location: /pr_new_order.php ");
+}else{
+  header("Location: /pr_finance.php ");
+}
 
 ?>

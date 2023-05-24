@@ -2,7 +2,11 @@
 
 <?php 
 $user_id=mysqli_real_escape_string($con, $_GET['user_id']);
-echo $user_id;die;
+$sql = "SELECT * FROM manager WHERE id=$user_id";
+$res = mysqli_query($con, $sql);
+$row = mysqli_fetch_assoc($res);
+extract($row);
+
 $order_type = 1;
 
 $curr_warehouse_id = mysqli_real_escape_string($con, $_GET['warehouse_id']);
@@ -20,8 +24,9 @@ $selected_shop = mysqli_real_escape_string($con, $_GET['shop']);
 $selected_network = mysqli_real_escape_string($con, $_GET['network_select']);
 $selected_payment_type = mysqli_real_escape_string($con, $_GET['payment_type']);
 
-
-if($manager_id_selected != 0 AND $manager_id_selected != ''){
+if($user_role == '1'){
+	$query_manager_select = " AND pr_orders_document.manager_id = '$user_id'";
+}else if($manager_id_selected != 0 AND $manager_id_selected != ''){
 	$query_manager_select = " AND pr_orders_document.manager_id = '$manager_id_selected'";
 }else{
 	$query_manager_select = '';
@@ -400,7 +405,7 @@ input[readonly] {
 							</select>
 				  </div>
 		  
-			
+				<?php if($user_role != '1'): ?>
 				  <div class="form-group col-md-2">
 								<label for="login">Մենեջեր</label>
 								<select name="manager_select" id="manager_select" class="form-control">
@@ -420,7 +425,7 @@ input[readonly] {
 									
 								</select>
 				  </div>	
-				  
+				  <?php endif; ?>
 				  <div class="form-group col-md-2">
 								<label for="login">Առաքիչ</label>
 								<select name="courier_select" id="courier_select" class="form-control">
