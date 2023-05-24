@@ -1,4 +1,4 @@
-<?php include 'api/db.php'; ?>
+<?php require '../db.php'; ?>
 
 <?php 
 print_r($_POST);
