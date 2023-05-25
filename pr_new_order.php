@@ -517,8 +517,8 @@ $(document).on('click','.ha_button', function() {
             localStorage.setItem("sum", sum);
         }
         $('.total').text(sum);
-        $('.sumtotalveradarch').text(ocalStorage.getItem("sum"));
-        $('.sumtotal').text(ocalStorage.getItem("sum") - sum);
+        $('.sumtotalveradarch').text(localStorage.getItem("sum"));
+        $('.sumtotal').text(localStorage.getItem("sum") - sum);
     });
 
 
@@ -780,7 +780,8 @@ $(document).on('click','.ha_button', function() {
             data: {shop_id: shop_id, action: 'shop_details'},
             success: function(data)
             {
-
+                    console.log('data::::::',data);
+                    
                 var get_data = JSON.parse(data)
 
                 $('#limits').html(get_data[0]);

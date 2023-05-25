@@ -35,6 +35,9 @@ if(isset($_POST['district'])){
 
 
 if(isset($_POST['action']) AND $_POST['action'] == 'shop_details'){
+	try{
+
+	
 		
 		$shop_id = mysqli_real_escape_string($con, $_POST['shop_id']);
 		$query_shops = mysqli_query($con, "SELECT * FROM shops WHERE shop_id = '$shop_id' ");
@@ -63,8 +66,7 @@ if(isset($_POST['action']) AND $_POST['action'] == 'shop_details'){
 		}
 		
 		
-		
-		
+
 		
 		$month = date('m');
 
@@ -85,11 +87,17 @@ if(isset($_POST['action']) AND $_POST['action'] == 'shop_details'){
 		
 		$query_for_all_dept_veradardz = mysqli_fetch_array(mysqli_query($con, "SELECT sum(order_last_summ) AS summ FROM pr_orders_document WHERE order_type = '2' AND  shop_id = '$shop_id' "));
 		
+
 		
-		
-		
-		$total_limit = $array_shop_detils['limit_cash'] + $array_shop_detils['limit_cash_ha'] + $array_shop_detils['limit_debt'] + $array_shop_detils['limit_debt_ha'] + $array_shop_detils['limit_credit'] + $array_shop_detils['limit_credit_ha'];
-		
+		$limit_cash = $array_shop_detils['limit_cash'] ? $array_shop_detils['limit_cash'] : 0;
+		$limit_cash_ha = $array_shop_detils['limit_cash_ha'] ? $array_shop_detils['limit_cash_ha'] : 0;
+
+		$limit_debt = $array_shop_detils['limit_debt'] ? $array_shop_detils['limit_debt'] : 0;
+		$limit_debt_ha = $array_shop_detils['limit_debt_ha'] ? $array_shop_detils['limit_debt_ha'] : 0;
+		$limit_credit = $array_shop_detils['limit_credit'] ? $array_shop_detils['limit_credit'] : 0;
+		$limit_credit_ha = $array_shop_detils['limit_credit_ha'] ? $array_shop_detils['limit_credit_ha'] : 0;
+
+		$total_limit = $limit_cash + $limit_cash_ha + $limit_debt + $limit_debt_ha + $limit_credit + $limit_credit_ha;
 		$shop_details = array();
 		$shop_details[0] = "
 		
@@ -103,7 +111,7 @@ if(isset($_POST['action']) AND $_POST['action'] == 'shop_details'){
 		
 		
 		";
-		
+
 		if($array_shop_detils['balance'] == ''){
 			$array_shop_detils['balance'] = 0;
 		}
@@ -116,6 +124,9 @@ if(isset($_POST['action']) AND $_POST['action'] == 'shop_details'){
 	    $shop_details[8] = $network_balance;
 		
 		echo json_encode($shop_details);
+	}catch(Exception $e){
+		echo 'Message: ' .$e->getMessage();
+	}
 	
 }
 

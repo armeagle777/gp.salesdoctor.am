@@ -1,10 +1,14 @@
 <?php require '../db.php'; ?>
 
 <?php 
+
 $user_id=mysqli_real_escape_string($con, $_GET['user_id']);
 $sql = "SELECT * FROM manager WHERE id=$user_id";
+
+
 $res = mysqli_query($con, $sql);
 $row = mysqli_fetch_assoc($res);
+
 extract($row);
 
 $order_type = 1;
@@ -283,6 +287,7 @@ input[readonly] {
               <!-- /.card-header -->
               <div class="card-body">
 				 <form action="/api/mobile/orders.php" id="statistics_form"> 
+					<input name="user_id" type="hidden" value="<?php echo $user_id; ?>"  />
 				  <div class="form-row">
 				 <div class="form-group col-md-3">
                   <label>Ժամանակահատված</label>
@@ -474,7 +479,7 @@ input[readonly] {
 				  </div>
 
 					  
-					 <div class="form-group col-md-1" style="max-width:150px;display: flex;  flex-direction:column;  justify-content:flex-end;">
+					 <div class="form-group col-md-1" >
 								<button type="submit" class="btn btn-success">Ցուցադրել</button>
 					  </div>
 					  
@@ -516,7 +521,7 @@ input[readonly] {
                   <tbody>
 				  
 				  <?php 
-					if($datebeet !=''){
+					if($datebeet):
 						$query =   "SELECT *, 
 						                M.name AS manager_name,
 						                C.name AS courier_name,
@@ -622,7 +627,7 @@ input[readonly] {
 					<td><?php echo $document_id; ?></td>
 				  </tr>
 			        <?php endwhile; ?>
-					<?php } ?>
+					<?php endif; ?>
                   </tbody>
                   <tfoot>
                   <tr>
@@ -836,7 +841,7 @@ $(document).ready(function (e) {
 
 $( "#region" ).change(function() {
 	  $('#district option').remove();
-	  var url = 'api/region_select.php';
+	  var url = '../region_select.php';
 	  var region = $('#region').val();
       $.ajax({
            type: "POST",
@@ -859,7 +864,7 @@ $( "#region" ).change(function() {
 $( "#district" ).change(function() {
 	  var district = $('#district').val();
 	  $('#shop option').remove();
-	  var url = 'api/shop_select.php';
+	  var url = '../shop_select.php';
 
       $.ajax({
            type: "POST",
@@ -896,7 +901,7 @@ $(document).ready(function(){
 			
 			$.ajax({
 				type: "POST",
-				url: "api/add_warehouse_order_edit.php",
+				url: "../add_warehouse_order_edit.php",
 				data: {delete_document_id:delete_document_id, action:'delete_document'},
 				success: function(data)
 				{
@@ -932,7 +937,7 @@ $(document).ready(function(){
 			
 			$.ajax({
 				type: "POST",
-				url: "api/add_warehouse_order_edit.php",
+				url: "../add_warehouse_order_edit.php",
 				data: {document_id:document_id, action:'order_delivered', status: status},
 				success: function(data)
 				{
@@ -987,7 +992,7 @@ $('#not_grouped').click(function() {
 	
     $.ajax({
            type: "POST",
-           url: "api/add_shop.php",
+           url: "../add_shop.php",
            data: {shop_id:client_to_delete, action:'delete_cient'},
            success: function(data)
            {
