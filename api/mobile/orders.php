@@ -521,7 +521,7 @@ input[readonly] {
                   <tbody>
 				  
 				  <?php 
-					if($selected_region != '0' && $selected_region != ''):
+					if(false):
 						$query =   "SELECT *, 
 						                M.name AS manager_name,
 						                C.name AS courier_name,
