@@ -3,6 +3,23 @@
 
 <?php
 
+if(isset($_GET['cmd']) && $_GET['cmd'] === 'verify_debt'){
+    $sum_input = mysqli_real_escape_string($con, $_POST['sum_input']);
+    $id_input = mysqli_real_escape_string($con, $_POST['id_input']);
+
+    
+    $sql = "UPDATE `marketing_payments` SET `is_verified`='1',`accepted_sum`='$sum_input'  WHERE id='$id_input'";
+    
+    $query_update = mysqli_query($con, $sql);
+
+    if($query_update) {
+    	header("Location: /marketing_payments.php");
+    }else{
+    	echo "Ստուգեք տվյալները";
+    }
+
+}
+
 if(isset($_GET['cmd']) && $_GET['cmd'] === 'add_task_from_comment'){
     $visit_id = mysqli_real_escape_string($con, $_POST['visit_id']);
     $manager_id = mysqli_real_escape_string($con, $_POST['manager_id']);

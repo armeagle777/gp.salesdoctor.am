@@ -402,7 +402,7 @@ input[readonly] {
 							<select name="network_select" id="network_select" class="form-control">
 							<option value="0"> Ընտրել </option>
 								<?php 
-
+									if($selected_district):
 									$query_network = mysqli_query($con, "SELECT * FROM network ORDER by id DESC");
 
 									while ($array_network = mysqli_fetch_array($query_network)):
@@ -412,7 +412,11 @@ input[readonly] {
 								 
 								<option value="<?php echo $network_id; ?>"  <?php if($network_id == $selected_network ) {echo "selected"; } ?> > <?php echo $network_name; ?></option>
 								
-								<?php endwhile; ?>
+								<?php 
+
+									endwhile; 
+								endif;
+							?>
 								
 							</select>
 				  </div>

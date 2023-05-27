@@ -54,7 +54,6 @@ if(isset($_GET['datebeet'])){
 				  
 				 <div class="form-group col-md-3">
                   <label>Ժամանակահատված</label>
-
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <span class="input-group-text">
@@ -87,10 +86,12 @@ if(isset($_GET['datebeet'])){
         							<th>Խանութի Հասցե</th>
         							<th>Պլան</th>
         							<th>Վճարում</th>
+        							<th>Հաստատված գումար</th>
         							<th>Տարբերություն</th>
         							<th>Ամիսներ</th>
 	    							<th>Մենեջեր</th>
     							    <th>Վճարման ա/թ</th>
+    							    <th>Հաստատել</th>
 						        </tr>
 					        </thead>
     					    <tbody>
@@ -100,6 +101,8 @@ if(isset($_GET['datebeet'])){
                                             	M.debt, 
                                             	M.visit, 
                                             	M.comment, 
+                                            	M.is_verified, 
+                                            	M.accepted_sum, 
                                             	M.created_at,
                                             	M.shop,
                                                 S.shop_id,
@@ -115,13 +118,16 @@ if(isset($_GET['datebeet'])){
                                             	1 $query_date_range";
                                     $total_plans=0;
                                     $total_payments=0;
+                                    $total_accepted=0;
         							$query = mysqli_query($con, $sql);
         							while ($row = mysqli_fetch_array($query)):
         							    extract($row);
         							    $total_plans += (int)$marketing_payment;
         							    $total_payments += (int)$debt;
+        							    $total_accepted += (int)$accepted_sum;
+										$is_disabled = $is_verified === '1' ? " disabled" : "";
         							    
-        							    $sql_sum = "SELECT SUM(debt) AS DEBT FROM marketing_payments WHERE YEAR(created_at)= YEAR('$created_at') AND created_at <= '$created_at' AND shop = '$shop' GROUP BY shop";
+        							    $sql_sum = "SELECT SUM(accepted_sum) AS ACCEPTED_SUM FROM marketing_payments WHERE YEAR(created_at)= YEAR('$created_at') AND created_at <= '$created_at' AND shop = '$shop' GROUP BY shop";
         							 //   echo $sql_sum;
         							    $query_sum = mysqli_query($con, $sql_sum);
         							    $row_sum = mysqli_fetch_array($query_sum);
@@ -134,24 +140,31 @@ if(isset($_GET['datebeet'])){
             							<td><?php  echo $SHOP_ADDRESS ; ?></td>
             							<td><?php  echo $marketing_payment ; ?></td>
             							<td><?php  echo $debt ; ?></td>
-            							<td><?php  echo $marketing_payment - $DEBT ; ?></td>
+            							<td><?php  echo $accepted_sum ; ?></td>
+            							<td><?php  echo $marketing_payment - $ACCEPTED_SUM ; ?></td>
             							<td><?php  echo $comment ; ?></td>
             							<td><?php  echo $MANAGER_NAME ; ?></td>
             							<td><?php  echo $created_at ; ?></td>
+										<td><button payment_id="<?php echo $id; ?>" debt="<?php echo $debt; ?>" class="btn btn-outline-success btn-sm verify_debt" title="Հաստատել" <?php echo $is_disabled; ?> >
+												<i class="fa fa-check"></i>
+											</button>
+										</td>
         					        </tr>
 						        <?php endwhile; ?>
 					        </tbody>    
     					    <tfoot>
     						    <tr>
-        							<th>ID (ՀԾ գնորդի կոդ)</th>
+        							<th>ID</th>
         							<th>Խանութի Անուն</th>
         							<th>Խանութի Հասցե</th>
         							<th><?php echo $total_plans ; ?></th>
         							<th><?php echo $total_payments; ?></th>
+        							<th><?php echo $total_accepted; ?></th>
         							<th>Տարբերություն</th>
         							<th>Ամիսներ</th>
         							<th>Մենեջեր</th>
         							<th>Վճարման ա/թ</th>
+									<th>Հաստատել</th>
     						    </tr>
     					    </tfoot>
     					</table>
@@ -209,41 +222,57 @@ include 'footer.php';
 <script src="../../dist/js/demo.js"></script>
 <!-- page script -->
 
-<!-- Modal -->
-<div class="modal fade" id="deletemodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle"></h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <b>Ջնջե՞լ խումբը</b>
-	   <input type="hidden" value="" name="client_to_delete" id="client_to_delete">
 
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Փակել</button>
-        <button type="button" class="btn btn-danger" id="click_delete">Այո</button>
-      </div>
-    </div>
-  </div>
+<!-- Modal -->
+<div class="modal fade" id="verify_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+		<div class="modal-header">
+			<h5 class="modal-title" id="exampleModalLongTitle">Հաստատել</h5>
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+		<div class="modal-body">
+			<form action="actions.php?cmd=verify_debt" method="POST">
+			<div class="form-group">
+				<label>Գումարը</label>
+				<input name="sum_input" id="sum_input" type="number" class="form-control"/>
+				<input name="id_input" id="id_input"  type="hidden"  />
+			</div>
+		</div>
+		<div class="modal-footer">
+			<button type="button" class="btn btn-secondary" data-dismiss="modal">Փակել</button>
+			<button type="submit" class="btn btn-danger" id="">Հաստատել</button>
+		</div>
+			</form>
+		</div>
+	</div>
 </div>
 
 
 <script type="text/javascript">
 
+	$(document).on('click', '.verify_debt', function(){
+		const debt = $(this).attr('debt')
+		const payment_id = $(this).attr('payment_id')		
 
- $('#reservation').daterangepicker({
-	locale: {
-      format: 'YYYY-MM-DD', 
-	  firstDay: 1
-    },
-	startDate: moment().startOf('month'),
-      endDate: moment().endOf('month'),
- });
+		$('#verify_modal #sum_input').val(debt)
+		$('#id_input').val(payment_id)
+
+		$('#verify_modal').modal('show');
+		
+		
+	})
+
+	$('#reservation').daterangepicker({
+		locale: {
+		format: 'YYYY-MM-DD', 
+		firstDay: 1
+		},
+		startDate: moment().startOf('month'),
+		endDate: moment().endOf('month'),
+	});
  
 
 
@@ -255,42 +284,40 @@ include 'footer.php';
 	
 	
 	$("#click_delete").click(function() {
-
-	var client_to_delete = $('#client_to_delete').val();
-	window.location.href = '/custom_expenses_add_category.php?category_id=' + client_to_delete + '&action=delete';
-
-});
+		var client_to_delete = $('#client_to_delete').val();
+		window.location.href = '/custom_expenses_add_category.php?category_id=' + client_to_delete + '&action=delete';
+	});
 	
 	
 
   $(function () {
     $("#example1").DataTable({
 		"language":{
-					  "sEmptyTable": "Տվյալները բացակայում են",
-					  "sProcessing": "Կատարվում է...",
-					  "sInfoThousands":  ",",
-					  "sLengthMenu": "Ցուցադրել արդյունքներ մեկ էջում _MENU_ ",
-					  "sLoadingRecords": "Բեռնվում է ...",
-					  "sZeroRecords": "Հարցմանը համապատասխանող արդյունքներ չկան",
-					  "sInfo": "Ցուցադրված են _START_-ից _END_ արդյունքները ընդհանուր _TOTAL_-ից",
-					  "sInfoEmpty": "Արդյունքներ գտնված չեն",
-					  "sInfoFiltered": "(ֆիլտրվել է ընդհանուր _MAX_ արդյունքներից)",
-					  "sInfoPostFix":  "",
-					  "sSearch": "Փնտրել",
-					  "oPaginate": {
-						  "sFirst": "Առաջին էջ",
-						  "sPrevious": "Նախորդ էջ",
-						  "sNext": "Հաջորդ էջ",
-						  "sLast": "Վերջին էջ"
-					  },
-					  "oAria": {
-						  "sSortAscending":  ": ակտիվացրեք աճման կարգով դասավորելու համար",
-						  "sSortDescending": ": ակտիվացրեք նվազման կարգով դասավորելու համար"
-					  }
-					},
-					"paging": false,
-		      "searching": false,
-			        "info": false
+			"sEmptyTable": "Տվյալները բացակայում են",
+			"sProcessing": "Կատարվում է...",
+			"sInfoThousands":  ",",
+			"sLengthMenu": "Ցուցադրել արդյունքներ մեկ էջում _MENU_ ",
+			"sLoadingRecords": "Բեռնվում է ...",
+			"sZeroRecords": "Հարցմանը համապատասխանող արդյունքներ չկան",
+			"sInfo": "Ցուցադրված են _START_-ից _END_ արդյունքները ընդհանուր _TOTAL_-ից",
+			"sInfoEmpty": "Արդյունքներ գտնված չեն",
+			"sInfoFiltered": "(ֆիլտրվել է ընդհանուր _MAX_ արդյունքներից)",
+			"sInfoPostFix":  "",
+			"sSearch": "Փնտրել",
+			"oPaginate": {
+				"sFirst": "Առաջին էջ",
+				"sPrevious": "Նախորդ էջ",
+				"sNext": "Հաջորդ էջ",
+				"sLast": "Վերջին էջ"
+			},
+			"oAria": {
+				"sSortAscending":  ": ակտիվացրեք աճման կարգով դասավորելու համար",
+				"sSortDescending": ": ակտիվացրեք նվազման կարգով դասավորելու համար"
+			}
+		},
+		"paging": false,
+		"searching": false,
+		"info": false
 		
 		
 		
