@@ -492,6 +492,14 @@
             </a>
         </li>
         <li class="nav-item has-treeview">
+            <a href="/qrs.php" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>
+                    QR կոդերի ցանկ
+                </p>
+            </a>
+        </li>
+        <li class="nav-item has-treeview">
             <a href="/shops_abandoned.php" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>

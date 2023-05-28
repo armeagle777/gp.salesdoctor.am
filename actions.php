@@ -3,6 +3,84 @@
 
 <?php
 
+if(isset($_GET['cmd']) && $_GET['cmd'] === 'save_qr_edit'){
+    try{
+        $property_select = $_POST['property_select'];
+        $shop_select = $_POST['shop_select'];
+        $qr_id = $_POST['qr_id'];
+        $qr_code = $_POST['qr_code'];
+
+        $sql = "UPDATE pr_qr SET qr_shop=''  WHERE qr_shop='$shop_select' AND id !='$qr_id'";
+        $query = mysqli_query($con, $sql);
+
+        $sql = "UPDATE shops SET qr_id=''  WHERE qr_id='$qr_code'";
+        $query = mysqli_query($con, $sql);
+
+        $sql = "UPDATE shops SET qr_id='$qr_code'  WHERE id='$shop_select'";
+        $query = mysqli_query($con, $sql);
+
+        $sql = "UPDATE pr_qr SET qr_property=''  WHERE qr_property='$property_select' AND id !='$qr_id'";
+        $query = mysqli_query($con, $sql);
+    
+        $sql = "UPDATE pr_qr SET qr_shop='$shop_select', qr_property='$property_select' WHERE id='$qr_id'";
+        $query = mysqli_query($con, $sql);
+    
+        header('Location: /qrs.php');
+
+    }catch(Exception $e){
+        echo $e -> getMessage();
+    }
+
+
+
+}
+
+
+if(isset($_GET['cmd']) && $_GET['cmd'] === 'qr_edit_modal'){
+    
+    $qr_id = $_POST['qr_id'];
+    $qr_code = $_POST['qr_code'];
+    $qr_property = $_POST['qr_property'];
+    $qr_shop = $_POST['qr_shop'];
+    $result="
+                <div class='form-group col-md-6'>
+                <input type='hidden' name='qr_id' value='$qr_id' />
+                <input type='hidden' name='qr_code' value='$qr_code' />
+                    <label for='owner_name'>Գույք</label>
+                    <select name='property_select' id='property_select' class='form-control'>
+                        <option value='0' hidden>Ընտրել</option>";
+
+    $sql_properties = "SELECT * FROM pr_property1";
+    $result_properties = mysqli_query($con,$sql_properties);
+    while($row = mysqli_fetch_array($result_properties)){
+      extract($row);
+      $selected = $qr_property == $id ? " selected " : "";
+      $result .= "<option value='$id' $selected >$property_1</option>";
+    }
+    $result .=   "</select>
+                </div>
+                <div class='form-group col-md-2'>
+                    <label for='owner_name'>Խանութ</label>
+                    <select name='shop_select' id='shop_select'  class='form-control'>
+                        <option value='0'>Ընտրել</option>";
+
+    $sql_shops = "SELECT id, name, address FROM shops";
+    $result_shops = mysqli_query($con,$sql_shops);
+    while($row = mysqli_fetch_array($result_shops)){
+      extract($row);
+      $selected = $qr_shop == $id ? " selected" : "";
+      $result .= "<option value='$id' $selected >$name($address)</option>";
+    }
+    $result .= "</select></div><script>
+
+    $('#shop_select').chosen()
+    $('#property_select').chosen()
+    
+    </script>";
+
+    echo $result;
+}
+
 if(isset($_GET['cmd']) && $_GET['cmd'] === 'verify_debt'){
     $sum_input = mysqli_real_escape_string($con, $_POST['sum_input']);
     $id_input = mysqli_real_escape_string($con, $_POST['id_input']);

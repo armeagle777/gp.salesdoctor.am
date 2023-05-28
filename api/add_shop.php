@@ -46,34 +46,40 @@ include 'db.php';
 	}
 
 if($action == 'add'){
-	$query_check_qr = mysqli_query($con, "SELECT qr_id FROM shops WHERE qr_id = '$qr_id'  ");
-	$rows = mysqli_num_rows($query_check_qr);
-	if($rows != 0){
-		echo "Տվյալ QR արդեն առկա է:";
-		exit;
-	}	
 	
-	$active = 'on';
+	// $query_check_qr = mysqli_query($con, "SELECT qr_id FROM shops WHERE qr_id = '$qr_id'  ");
+	// $rows = mysqli_num_rows($query_check_qr);
+	// if($rows != 0){
+	// 	echo "Տվյալ QR արդեն առկա է:";
+	// 	exit;
+	// }	
+	try{
 	
-	$query_check_shop_id = mysqli_query($con, "SELECT shop_id FROM shops WHERE shop_id = '$shop_id' ");
-	$rows = mysqli_num_rows($query_check_shop_id);
-	if($rows != 0){
-		echo "Տվյալ խանութ արդեն առկա է:";
-		exit;
-	}	
+		$active = 'on';
 	
-	$query_insert = mysqli_query($con, "INSERT INTO shops (courier_id,marketing_payment,as_classification_id, property_1, property_2, shop_id, filter_n, qr_id, name, address, district, region, network, comment, stend_count, stend_summ, law_name, law_address, hvhh, phone, active, shop_latitude, shop_longitude, discount, limit_cash, limit_cash_ha, limit_debt, limit_debt_ha, limit_credit, limit_credit_ha, static_manager, owner_name, owner_tel, hasDebt) 
-	VALUES ('$courier',$marketing_payment','$as_class','$property_1','$property_2',$shop_id', '$filter_n', '$qr_id', '$name', '$address', '$district', '$region', '$network', '$comment', '$stend_count', '$stend_summ', '$law_name', '$law_address', '$hvhh', '$phone', '$active' , '$latitude' , '$longitude', '$discount', '$limit_cash', '$limit_cash_ha', '$limit_debt', '$limit_debt_ha', '$limit_credit', '$limit_credit_ha', '$static_manager',  '$owner_name', '$owner_tel', '$hasDebt' )");
+		$query_check_shop_id = mysqli_query($con, "SELECT shop_id FROM shops WHERE shop_id = '$shop_id' ");
+		$rows = mysqli_num_rows($query_check_shop_id);
+		if($rows != 0){
+			echo "Տվյալ խանութ արդեն առկա է:";
+			exit;
+		}	
 	
-		
-	$query_manager_to_shop = mysqli_query($con, "INSERT INTO manager_to_shop (shop_id, manager_id) VALUES ('$shop_id', '$static_manager')");
+		$sql="INSERT INTO shops 
+		(courier_id,marketing_payment,as_classification_id, property_1, property_2, shop_id, filter_n,  name, address, district, region, network, comment, stend_count, stend_summ, law_name, law_address, hvhh, phone, active, shop_latitude, shop_longitude, discount, limit_cash, limit_cash_ha, limit_debt, limit_debt_ha, limit_credit, limit_credit_ha, static_manager, owner_name, owner_tel, hasDebt) 
+		VALUES ('$courier', '$marketing_payment', '$as_class', '$property_1', '$property_2','$shop_id', '$filter_n',  '$name', '$address', '$district', '$region', '$network', '$comment', '$stend_count', '$stend_summ', '$law_name', '$law_address', '$hvhh', '$phone', '$active' , '$latitude' , '$longitude', '$discount', '$limit_cash', '$limit_cash_ha', '$limit_debt', '$limit_debt_ha', '$limit_credit', '$limit_credit_ha', '$static_manager',  '$owner_name', '$owner_tel', '$hasDebt' )";
+		// echo $sql;die;
+		$query_insert = mysqli_query($con, $sql);		
+		$query_manager_to_shop = mysqli_query($con, "INSERT INTO manager_to_shop (shop_id, manager_id) VALUES ('$shop_id', '$static_manager')");
 	
 	
 	
-	if($query_insert) {
-		echo "Հաջողությամբ ավելացված է";
-	}else{
-		echo "Ստուգեք տվյալները";
+		if($query_insert) {
+			echo "Հաջողությամբ ավելացված է";
+		}else{
+			echo "Ստուգեք տվյալները";
+		}
+	}catch(Exception $e){
+		echo $e -> getMessage();
 	}
 }
 
@@ -90,7 +96,6 @@ if($action == 'edit'){
             	hasDebt='$hasDebt', 
             	shop_id = '$shop_id', 
             	filter_n = '$filter_n', 
-            	qr_id = '$qr_id', 
             	name = '$name', 
             	address = '$address', 
             	district = '$district', 

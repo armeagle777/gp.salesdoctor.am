@@ -1,107 +1,97 @@
 <?php require '../db.php'; ?>
 
+
 <?php 
-
-$user_id=mysqli_real_escape_string($con, $_GET['user_id']);
-$sql = "SELECT * FROM manager WHERE id=$user_id";
-
-
-$res = mysqli_query($con, $sql);
-$row = mysqli_fetch_assoc($res);
-
-extract($row);
-
-$order_type = 1;
-
-$curr_warehouse_id = mysqli_real_escape_string($con, $_GET['warehouse_id']);
+	$user_role = null;
+	$order_type = 1;
+	$user_id=mysqli_real_escape_string($con, $_GET['user_id']);
+	$sql = "SELECT * FROM manager WHERE id=$user_id";
 
 
-
-$manager_id_selected = mysqli_real_escape_string($con, $_GET['manager_select']);
-$courier_id_selected = mysqli_real_escape_string($con, $_GET['courier_select']);
-
-$district_id_selected = mysqli_real_escape_string($con, $_GET['district_select']);
-
-$selected_region = mysqli_real_escape_string($con, $_GET['region']);
-$selected_district = mysqli_real_escape_string($con, $_GET['district']);
-$selected_shop = mysqli_real_escape_string($con, $_GET['shop']);
-$selected_network = mysqli_real_escape_string($con, $_GET['network_select']);
-$selected_payment_type = mysqli_real_escape_string($con, $_GET['payment_type']);
-
-if($user_role == '1'){
-	$query_manager_select = " AND pr_orders_document.manager_id = '$user_id'";
-}else if($manager_id_selected != 0 AND $manager_id_selected != ''){
-	$query_manager_select = " AND pr_orders_document.manager_id = '$manager_id_selected'";
-}else{
-	$query_manager_select = '';
-}
-
-if($courier_id_selected != 0 AND $courier_id_selected != ''){
-	$query_courier_select = " AND pr_orders_document.courier_id = '$courier_id_selected'";
-}else{
-	$query_courier_select = '';
-}
+	$res = mysqli_query($con, $sql);
+	$row = mysqli_fetch_assoc($res);
+	$user_role = $row['user_role'];
 
 
-$group_selected = mysqli_real_escape_string($con, $_GET['group_id']);
+	$curr_warehouse_id = mysqli_real_escape_string($con, $_GET['warehouse_id']);
+	$manager_id_selected = mysqli_real_escape_string($con, $_GET['manager_select']);
+	$courier_id_selected = mysqli_real_escape_string($con, $_GET['courier_select']);
+	$district_id_selected = mysqli_real_escape_string($con, $_GET['district_select']);
+	$selected_region = mysqli_real_escape_string($con, $_GET['region']);
+	$selected_district = mysqli_real_escape_string($con, $_GET['district']);
+	$selected_shop = mysqli_real_escape_string($con, $_GET['shop']);
+	$selected_network = mysqli_real_escape_string($con, $_GET['network_select']);
+	$selected_payment_type = mysqli_real_escape_string($con, $_GET['payment_type']);
+	$group_selected = mysqli_real_escape_string($con, $_GET['group_id']);
 
 
-if($group_selected != 0 AND $group_selected != ''){
-	$query_group_selected = " AND pr_orders_document.product_group = '$group_selected' ";
-}else{
-	$query_group_selected = '';
-}
+	if($user_role == '1'){
+		$query_manager_select = " AND pr_orders_document.manager_id = '$user_id'";
+	}else if($manager_id_selected != 0 AND $manager_id_selected != ''){
+		$query_manager_select = " AND pr_orders_document.manager_id = '$manager_id_selected'";
+	}else{
+		$query_manager_select = '';
+	}
+
+	if($courier_id_selected != 0 AND $courier_id_selected != ''){
+		$query_courier_select = " AND pr_orders_document.courier_id = '$courier_id_selected'";
+	}else{
+		$query_courier_select = '';
+	}
 
 
-//new
-if($selected_region != 0 AND $selected_region != ''){
-	$query_region_select = " AND shops.region = '$selected_region'";
-}else{
-	$query_region_select = '';
-}
-
-if($selected_district != 0 AND $selected_district != ''){
-	$query_district_select = " AND shops.district = '$selected_district'";
-}else{
-	$query_district_select = '';
-}
-
-if($selected_shop != 0 AND $selected_shop != ''){
-	$query_shop_select = " AND shops.shop_id = '$selected_shop'";
-}else{
-	$query_shop_select = '';
-}
+	if($group_selected != 0 AND $group_selected != ''){
+		$query_group_selected = " AND pr_orders_document.product_group = '$group_selected' ";
+	}else{
+		$query_group_selected = '';
+	}
 
 
-if($selected_network != 0 AND $selected_network != ''){
-	$query_network_select = " AND shops.network = '$selected_network'";
-}else{
-	$query_network_select = '';
-}
+	//new
+	if($selected_region != 0 AND $selected_region != ''){
+		$query_region_select = " AND shops.region = '$selected_region'";
+	}else{
+		$query_region_select = '';
+	}
+
+	if($selected_district != 0 AND $selected_district != ''){
+		$query_district_select = " AND shops.district = '$selected_district'";
+	}else{
+		$query_district_select = '';
+	}
+
+	if($selected_shop != 0 AND $selected_shop != ''){
+		$query_shop_select = " AND shops.shop_id = '$selected_shop'";
+	}else{
+		$query_shop_select = '';
+	}
 
 
-if($selected_payment_type != 0 AND $selected_payment_type != ''){
-	$payment_type_select = " AND pr_orders_document.pay_type = '$selected_payment_type'";
-}else{
-	$payment_type_select = '';
-}
+	if($selected_network != 0 AND $selected_network != ''){
+		$query_network_select = " AND shops.network = '$selected_network'";
+	}else{
+		$query_network_select = '';
+	}
 
 
+	if($selected_payment_type != 0 AND $selected_payment_type != ''){
+		$payment_type_select = " AND pr_orders_document.pay_type = '$selected_payment_type'";
+	}else{
+		$payment_type_select = '';
+	}
 
+	$datebeet = mysqli_real_escape_string($con, $_GET['datebeet']);
+	$date_ex = explode(" - ", $datebeet);
+	$start_date = $date_ex[0];
+	$end_date = $date_ex[1];
 
+	if($start_date != $end_date){
+		$query_date_range = " BETWEEN '$start_date' AND '$end_date'";
+	}else{
+		$query_date_range = " LIKE '$start_date%'";
+	}
 
-$datebeet = mysqli_real_escape_string($con, $_GET['datebeet']);
-$date_ex = explode(" - ", $datebeet);
-$start_date = $date_ex[0];
-$end_date = $date_ex[1];
-
-if($start_date != $end_date){
-	$query_date_range = " BETWEEN '$start_date' AND '$end_date'";
-}else{
-	$query_date_range = " LIKE '$start_date%'";
-}
-
-	if($_SESSION['user_role'] == '3' ){
+	if($user_role == '3' ){
 		$disabled = 'disabled';
 	}else{
 		$disabled = '';
@@ -110,32 +100,32 @@ if($start_date != $end_date){
 					
 ?>
 
-<link rel="stylesheet" href="../../../plugins/fontawesome-free/css/all.min.css">
-  <!-- Ionicons -->
-  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-  <!-- Tempusdominus Bbootstrap 4 -->
-  <link rel="stylesheet" href="../../../plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
-  <!-- iCheck -->
-  <link rel="stylesheet" href="../../../plugins/icheck-bootstrap/icheck-bootstrap.min.css">
-  <!-- JQVMap -->
-  <link rel="stylesheet" href="../../../plugins/jqvmap/jqvmap.min.css">
-  <!-- Theme style -->
-  <link rel="stylesheet" href="../../../dist/css/adminlte.min.css">
-  <!-- overlayScrollbars -->
-  <link rel="stylesheet" href="../../../plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
-  <!-- Daterange picker -->
-  <link rel="stylesheet" href="../../../plugins/daterangepicker/daterangepicker.css">
-  <!-- summernote -->
-  <link rel="stylesheet" href="../../../plugins/summernote/summernote-bs4.css">
-  <!-- Custom css -->
-  <link rel="stylesheet" href="../../../plugins/custom_style.css">
-  <!-- Google Font: Source Sans Pro -->
-  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
-  
-    <!-- Bootstrap toggle button styles  -->
-  <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
-  <!-- Choosen select  styles  -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css"
+	<link rel="stylesheet" href="../../../plugins/fontawesome-free/css/all.min.css">
+	<!-- Ionicons -->
+	<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+	<!-- Tempusdominus Bbootstrap 4 -->
+	<link rel="stylesheet" href="../../../plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+	<!-- iCheck -->
+	<link rel="stylesheet" href="../../../plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+	<!-- JQVMap -->
+	<link rel="stylesheet" href="../../../plugins/jqvmap/jqvmap.min.css">
+	<!-- Theme style -->
+	<link rel="stylesheet" href="../../../dist/css/adminlte.min.css">
+	<!-- overlayScrollbars -->
+	<link rel="stylesheet" href="../../../plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+	<!-- Daterange picker -->
+	<link rel="stylesheet" href="../../../plugins/daterangepicker/daterangepicker.css">
+	<!-- summernote -->
+	<link rel="stylesheet" href="../../../plugins/summernote/summernote-bs4.css">
+	<!-- Custom css -->
+	<link rel="stylesheet" href="../../../plugins/custom_style.css">
+	<!-- Google Font: Source Sans Pro -->
+	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+	
+		<!-- Bootstrap toggle button styles  -->
+	<link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+	<!-- Choosen select  styles  -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css"
         integrity="sha512-yVvxUQV0QESBt1SyZbNJMAwyKvFTLMyXSyBHDO4BG5t7k/Lw34tyqlSDlKIrIENIzCl+RVUNjmCPG+V/GMesRw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
@@ -259,273 +249,199 @@ input[readonly] {
 
 </style>
 
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1><?php if($order_type == '2'){ echo "Վերադարձներ"; }else {echo "Պատվերներ"; } ?></h1>
-          </div>
-          <div class="col-sm-6 d-flex justify-content-end">
-			<a href="/dashboard.php" class="btn btn-info"><i class="fa fa-window-close"></i></a>
-          </div>
-        </div>
-      </div><!-- /.container-fluid -->
-    </section>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+	<!-- Content Header (Page header) -->
+	<section class="content-header">
+		<div class="container-fluid">
+			<div class="row mb-2">
+				<div class="col-sm-6">
+					<h1><?php if($order_type == '2'){ echo "Վերադարձներ"; }else {echo "Պատվերներ"; } ?></h1>
+				</div>
+				<div class="col-sm-6 d-flex justify-content-end">
+					<a href="/dashboard.php" class="btn btn-info"><i class="fa fa-window-close"></i></a>
+				</div>
+			</div>
+		</div><!-- /.container-fluid -->
+	</section>
 
     <!-- Main content -->
     <section class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-12">
-      
-            <div class="card">
-              <div class="card-header">
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-				 <form action="/api/mobile/orders.php" id="statistics_form"> 
-					<input name="user_id" type="hidden" value="<?php echo $user_id; ?>"  />
-				  <div class="form-row">
-				 <div class="form-group col-md-3">
-                  <label>Ժամանակահատված</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="far fa-calendar-alt"></i>
-                      </span>
-                    </div>
-                    <input type="text" class="form-control float-right " id="reservation" value="<?php echo $datebeet; ?>" name="datebeet">
-                  </div>
-                  <!-- /.input group -->
-                </div>
-                <!-- /.form group -->
-				  
-					  <div class="form-group col-md-2">
-								<label for="login">Խումբ</label>
-								<select name="group_id" id="group_id" class="form-control">
-								<option value="0"> Ընտրել </option>
-									<?php 
-										$query_groups = mysqli_query($con, "SELECT * FROM pr_groups");
-										while($groups_array = mysqli_fetch_array($query_groups)):
-										$group_id = $groups_array['id'];
-										$group_name = $groups_array['group_name'];
-									?> 
-									 
-									<option value="<?php echo $group_id; ?>"  <?php if($group_selected == $group_id ) {echo "selected"; } ?> > <?php echo $group_name; ?></option>
-									
-									<?php endwhile; ?>
-									
-								</select>
-					  </div>
-					  
-					  
-					  
-					  
-					  
-					  
-					  
-					  
-					  			  
-			  
-			   <div class="form-group col-md-2">
-							<label for="address">Մարզ</label>
-
-								<select name="region" id="region" class="form-control">
-									<option value="0"> Ընտրել </option>
-										<?php 
-											$query_region = mysqli_query($con, "SELECT * FROM region ORDER by id DESC");
-											while ($array_regions = mysqli_fetch_array($query_region)):
-											$region_id = $array_regions['id'];
-											$region_name = $array_regions['region_name'];
-										?> 
-										 
-									<option value="<?php echo $region_id; ?>" <?php if($region_id == $selected_region) {echo "selected"; } ?>> <?php echo $region_name; ?></option>
-							
-									<?php endwhile; ?>
-							
-								</select>
-
-						  </div>
-
-
-
-
-				  <div class="form-group col-md-2">
-					<label for="district">Տարածք</label>
-						
-					<select name="district" id="district" class="form-control">
-					
-						<option value="0">Ընտրել</option>
-							
-						<?php 
-							$district_query = mysqli_query($con, "SELECT * FROM district WHERE region_id = '$selected_region' ORDER by id DESC");
-							while ($array_district = mysqli_fetch_array($district_query)):
-							$district_id = $array_district['id'];
-							$district_name = $array_district['district_name'];
-						?> 
-						 
-					<option value="<?php echo $district_id; ?>" <?php if($district_id == $selected_district) {echo "selected"; } ?>> <?php echo $district_name; ?></option>
-			
-					<?php endwhile; ?>	
-			
-					</select>
-					
-				  </div>
-				  
-				  <div class="form-group col-md-2">
-					<label for="shop">Խանութ</label>
-						
-					<select name="shop" id="shop" class="form-control">
-
-						<option value="0">Ընտրել</option>
-					
-					<?php 
-							$shops_query = mysqli_query($con, "SELECT shop_id, name, district FROM shops WHERE district = '$selected_district' ORDER by id DESC");
-							while ($array_shops = mysqli_fetch_array($shops_query)):
-							$shop_id = $array_shops['shop_id'];
-							$shop_name = $array_shops['name'];
-						?> 
-						 
-					<option value="<?php echo $shop_id; ?>" <?php if($shop_id == $selected_shop) {echo "selected"; } ?>> <?php echo $shop_name; ?></option>
-			
-					<?php endwhile; ?>
-					
-					</select>
-					
-				  </div>
-				  
-					  <div class="form-group col-md-2">
-							<label for="login">Ցանց</label>
-							<select name="network_select" id="network_select" class="form-control">
-							<option value="0"> Ընտրել </option>
-								<?php 
-									if($selected_district):
-									$query_network = mysqli_query($con, "SELECT * FROM network ORDER by id DESC");
-
-									while ($array_network = mysqli_fetch_array($query_network)):
-									$network_id = $array_network['id'];
-									$network_name = $array_network['network_name'];
-								?> 
-								 
-								<option value="<?php echo $network_id; ?>"  <?php if($network_id == $selected_network ) {echo "selected"; } ?> > <?php echo $network_name; ?></option>
-								
-								<?php 
-
-									endwhile; 
-								endif;
-							?>
-								
-							</select>
-				  </div>
-				  
-				  <div class="form-group col-md-2">
-							<label for="login">Վճ. տիպ</label>
-							<select name="payment_type" id="payment_type" class="form-control">
-							<option value="0"> Ընտրել </option>
-								<?php 
-
-									$query_payment_type = mysqli_query($con, "SELECT * FROM pr_payment_type ORDER by id DESC");
-
-									while ($array_payment_type = mysqli_fetch_array($query_payment_type)):
-									$payment_type_id = $array_payment_type['id'];
-									$payment_type_name = $array_payment_type['payment_name'];
-								?> 
-								 
-								<option value="<?php echo $payment_type_id; ?>"  <?php if($payment_type_id == $selected_payment_type ) {echo "selected"; } ?> > <?php echo $payment_type_name; ?></option>
-								
-								<?php endwhile; ?>
-								
-							</select>
-				  </div>
-		  
-				<?php if($user_role != '1'): ?>
-				  <div class="form-group col-md-2">
-								<label for="login">Մենեջեր</label>
-								<select name="manager_select" id="manager_select" class="form-control">
-								<option value="0"> Ընտրել </option>
-									<?php 
-
-										$query_manager = mysqli_query($con, "SELECT * FROM manager WHERE user_role = '1' ORDER by id DESC");
-
-										while ($array_manager = mysqli_fetch_array($query_manager)):
-										$manager_id = $array_manager['id'];
-										$manager_login = $array_manager['login'];
-									?> 
-									 
-									<option value="<?php echo $manager_id; ?>"  <?php if($manager_id_selected == $manager_id ) {echo "selected"; } ?> > <?php echo $manager_login; ?></option>
-									
-									<?php endwhile; ?>
-									
-								</select>
-				  </div>	
-				  <?php endif; ?>
-				  <div class="form-group col-md-2">
-								<label for="login">Առաքիչ</label>
-								<select name="courier_select" id="courier_select" class="form-control">
-								<option value="0"> Ընտրել </option>
-									<?php 
-
-										$query_courier = mysqli_query($con, "SELECT * FROM manager WHERE user_role = '5' ORDER by id DESC");
-
-										while ($array_courier = mysqli_fetch_array($query_courier)):
-										$courier_id = $array_courier['id'];
-										$courier_login = $array_courier['login'];
-									?> 
-									 
-									<option value="<?php echo $courier_id; ?>"  <?php if($courier_id_selected == $courier_id ) {echo "selected"; } ?> > <?php echo $courier_login; ?></option>
-									
-									<?php endwhile; ?>
-									
-								</select>
-				  </div>
-
-					  
-					 <div class="form-group col-md-1" >
-								<button type="submit" class="btn btn-success">Ցուցադրել</button>
-					  </div>
-					  
-					  
-					  <input type="hidden" name="order_type" value="<?php echo $order_type; ?>">
-					  
-					  
-					
-					</div>
-				
-				
-				  </form>
-			  
-		<?php //echo "SELECT * FROM pr_orders_document LEFT JOIN shops ON pr_orders_document.shop_id = shops.shop_id LEFT JOIN district ON shops.district = district.id LEFT JOIN network ON shops.network = network.id LEFT JOIN pr_groups ON pr_orders_document.product_group = pr_groups.id WHERE pr_orders_document.order_type = '$order_type' AND document_date $query_date_range $query_district_select $query_manager_select "; ?>
-			  
-                <table id="example1" class="table table-bordered table-striped">
-                  <thead>
-                  <tr>
-					<th>Ժամանակ</th>
-                    <th style="width:150px;">Գործողություն</th>
-					<th>Ավարտ</th>					
-					<th style="width: 200px;">Նախնական գումար</th>
-					<th style="width: 200px;">Գումար</th>
-					<th class="select-filter">Վճ. տիպ</th>
-					<th class="select-filter">Մեկնաբանություն</th>
-					<th class="select-filter">Խումբ</th>
-                    <th class="select-filter">Խանութ</th>
-                    <th class="select-filter">Հասցե</th>
-                    <th class="select-filter">Տարածք</th>
-					<th class="select-filter">Մենեջեր</th>
-					<th class="select-filter">Հ/Ա</th>
-					<th class="select-filter">Ցանց</th>
-					<th class="select-filter">Խումբ</th>
-					<th class="select-filter">Առաքիչ</th>
-					<th class="select-filter">Կտրոն</th>
-					<th class="select-filter">Համար</th>
-                  </tr>
-                  </thead>
-                  <tbody>
+      	<div class="container-fluid">
+        	<div class="row">
+          		<div class="col-12">      
+            		<div class="card">
+              			<div class="card-header">
+              			</div>
+						<!-- /.card-header -->
+						<div class="card-body">
+				 			<form action="/api/mobile/orders.php" id="statistics_form"> 
+								<input name="user_id" type="hidden" value="<?php echo $user_id; ?>"  />
+				  				<div class="form-row">
+									<div class="form-group col-md-3">
+                  						<label>Ժամանակահատված</label>
+										<div class="input-group">
+											<div class="input-group-prepend">
+												<span class="input-group-text">
+													<i class="far fa-calendar-alt"></i>
+												</span>
+											</div>
+											<input type="text" class="form-control float-right " id="reservation" value="<?php echo $datebeet; ?>" name="datebeet">
+										</div>
+										<!-- /.input group -->
+									</div>
+									<!-- /.form group -->				  
+									<div class="form-group col-md-2">
+										<label for="login">Խումբ</label>
+										<select name="group_id" id="group_id" class="form-control">
+										<option value="0"> Ընտրել </option>
+											<?php 
+												$query_groups = mysqli_query($con, "SELECT * FROM pr_groups");
+												while($groups_array = mysqli_fetch_array($query_groups)):
+												$group_id = $groups_array['id'];
+												$group_name = $groups_array['group_name'];
+											?> 											
+											<option value="<?php echo $group_id; ?>"  <?php if($group_selected == $group_id ) {echo "selected"; } ?> > <?php echo $group_name; ?></option>											
+											<?php endwhile; ?>											
+										</select>
+									</div>		  
+									<div class="form-group col-md-2">
+										<label for="address">Մարզ</label>
+										<select name="region" id="region" class="form-control">
+											<option value="0"> Ընտրել </option>
+											<?php 
+												$query_region = mysqli_query($con, "SELECT * FROM region ORDER by id DESC");
+												while ($array_regions = mysqli_fetch_array($query_region)):
+												$region_id = $array_regions['id'];
+												$region_name = $array_regions['region_name'];
+											?> 												
+												<option value="<?php echo $region_id; ?>" <?php if($region_id == $selected_region) {echo "selected"; } ?>> <?php echo $region_name; ?></option>									
+											<?php endwhile; ?>									
+										</select>
+									</div>
+									<div class="form-group col-md-2">
+										<label for="district">Տարածք</label>											
+										<select name="district" id="district" class="form-control" >										
+											<option value="0">Ընտրել</option>												
+											<?php 
+												if($selected_region):
+													$district_query = mysqli_query($con, "SELECT * FROM district WHERE region_id = '$selected_region' ORDER by id DESC");
+													while ($array_district = mysqli_fetch_array($district_query)):
+													$district_id = $array_district['id'];
+													$district_name = $array_district['district_name'];
+											?> 											
+												<option value="<?php echo $district_id; ?>" <?php if($district_id == $selected_district) {echo "selected"; } ?>> <?php echo $district_name; ?></option>								
+												<?php endwhile; ?>								
+											<?php endif; ?>								
+										</select>										
+									</div>				  
+									<div class="form-group col-md-2">
+										<label for="shop">Խանութ</label>						
+										<select name="shop" id="shop" class="form-control">
+											<option value="0">Ընտրել</option>					
+											<?php
+												if($selected_district): 
+												$shops_query = mysqli_query($con, "SELECT shop_id, name, district FROM shops WHERE district = '$selected_district' ORDER by id DESC");
+												while ($array_shops = mysqli_fetch_array($shops_query)):
+												$shop_id = $array_shops['shop_id'];
+												$shop_name = $array_shops['name'];
+											?> 						 
+												<option value="<?php echo $shop_id; ?>" <?php if($shop_id == $selected_shop) {echo "selected"; } ?> > <?php echo $shop_name; ?></option>			
+												<?php endwhile; ?>					
+											<?php endif; ?>					
+										</select>					
+									</div>				  
+									<div class="form-group col-md-2">
+										<label for="login">Ցանց</label>
+										<select name="network_select" id="network_select" class="form-control">
+											<option value="0"> Ընտրել </option>
+											<?php 
+													$query_network = mysqli_query($con, "SELECT * FROM network ORDER by id DESC");
+													while ($array_network = mysqli_fetch_array($query_network)):
+													$network_id = $array_network['id'];
+													$network_name = $array_network['network_name'];
+											?> 											
+												<option value="<?php echo $network_id; ?>"  <?php if($network_id == $selected_network ) {echo "selected"; } ?> > <?php echo $network_name; ?></option>											
+											<?php
+													endwhile; 
+											?>												
+										</select>
+									</div>				  
+									<div class="form-group col-md-2">
+										<label for="login">Վճ. տիպ</label>
+										<select name="payment_type" id="payment_type" class="form-control">
+											<option value="0"> Ընտրել </option>
+											<?php
+												$query_payment_type = mysqli_query($con, "SELECT * FROM pr_payment_type ORDER by id DESC");
+												while ($array_payment_type = mysqli_fetch_array($query_payment_type)):
+												$payment_type_id = $array_payment_type['id'];
+												$payment_type_name = $array_payment_type['payment_name'];
+											?> 													
+												<option value="<?php echo $payment_type_id; ?>"  <?php if($payment_type_id == $selected_payment_type ) {echo "selected"; } ?> > <?php echo $payment_type_name; ?></option>											
+											<?php endwhile; ?>													
+										</select>
+									</div>		  
+									<?php if($user_role != '1'): ?>
+										<div class="form-group col-md-2">
+											<label for="login">Մենեջեր</label>
+											<select name="manager_select" id="manager_select" class="form-control">
+											<option value="0"> Ընտրել </option>
+												<?php
+													$query_manager = mysqli_query($con, "SELECT * FROM manager WHERE user_role = '1' ORDER by id DESC");
+													while ($array_manager = mysqli_fetch_array($query_manager)):
+													$manager_id = $array_manager['id'];
+													$manager_login = $array_manager['login'];
+												?> 												
+												<option value="<?php echo $manager_id; ?>"  <?php if($manager_id_selected == $manager_id ) {echo "selected"; } ?> > <?php echo $manager_login; ?></option>												
+												<?php endwhile; ?>												
+											</select>
+										</div>	
+									<?php endif; ?>
+									<div class="form-group col-md-2">
+										<label for="login">Առաքիչ</label>
+										<select name="courier_select" id="courier_select" class="form-control">
+											<option value="0"> Ընտրել </option>
+											<?php
+												$query_courier = mysqli_query($con, "SELECT * FROM manager WHERE user_role = '5' ORDER by id DESC");
+												while ($array_courier = mysqli_fetch_array($query_courier)):
+												$courier_id = $array_courier['id'];
+												$courier_login = $array_courier['login'];
+											?> 											
+												<option value="<?php echo $courier_id; ?>"  <?php if($courier_id_selected == $courier_id ) {echo "selected"; } ?> > <?php echo $courier_login; ?></option>											
+											<?php endwhile; ?>											
+										</select>
+									</div>					  
+									<div class="form-group col-md-2" >
+										<button type="submit" class="btn btn-warning">Ցուցադրել</button>
+										<input type="hidden" name="order_type" value="<?php echo $order_type; ?>">						
+								</div>				
+				  			</form>			  
+                			<table id="example1" class="table table-bordered table-striped">
+                  				<thead>
+									<tr>
+										<th>Ժամանակ</th>
+										<th style="width:150px;">Գործողություն</th>
+										<th>Ավարտ</th>					
+										<th style="width: 200px;">Նախնական գումար</th>
+										<th style="width: 200px;">Գումար</th>
+										<th class="select-filter">Վճ. տիպ</th>
+										<th class="select-filter">Մեկնաբանություն</th>
+										<th class="select-filter">Խումբ</th>
+										<th class="select-filter">Խանութ</th>
+										<th class="select-filter">Հասցե</th>
+										<th class="select-filter">Տարածք</th>
+										<th class="select-filter">Մենեջեր</th>
+										<th class="select-filter">Հ/Ա</th>
+										<th class="select-filter">Ցանց</th>
+										<th class="select-filter">Խումբ</th>
+										<th class="select-filter">Առաքիչ</th>
+										<th class="select-filter">Կտրոն</th>
+										<th class="select-filter">Համար</th>
+									</tr>
+                  				</thead>
+                  				<tbody>
 				  
 				  <?php 
-					if(false):
 						$query =   "SELECT *, 
 						                M.name AS manager_name,
 						                C.name AS courier_name,
@@ -631,7 +547,6 @@ input[readonly] {
 					<td><?php echo $document_id; ?></td>
 				  </tr>
 			        <?php endwhile; ?>
-					<?php endif; ?>
                   </tbody>
                   <tfoot>
                   <tr>
@@ -772,7 +687,7 @@ include 'footer.php';
 </div>
 
 
-//Image modal
+
 <!-- The Modal -->
 <div id="imageModal" class="modal image-modal">
   <span class="close">&times;</span>
@@ -783,7 +698,7 @@ include 'footer.php';
 
 <script>
 
-//Image modal code
+
 
 $(document).on("click",".myImg", function(){
     $("#imageModal").show()

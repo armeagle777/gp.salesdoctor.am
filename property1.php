@@ -34,14 +34,14 @@
                   <tr>
                     <th>Հ\Հ</th>
                     <th>Գույք 1</th>
-					<th>Պահեստում է</th>
+                    <th>QR կոդ</th>
+					          <th>Պահեստում է</th>
                     <th>Խանութի Հ\Հ</th>
                     <th>Անուն</th>
                     <th>Հասցե</th>
                     <th>Մենեջեր</th>
                     <th>ՀՎՀՀ</th>
                     <th>ՍՊԸ</th>
-
                     <th style="width:150px;">Ջնջել</th>
                   </tr>
                   </thead>
@@ -58,38 +58,28 @@
             					LEFT JOIN manager ON shops.static_manager = manager.id 
         					ORDER BY `pr_property1`.`id` DESC";
 
-					$query = mysqli_query($con, $sql);
-					while ($array_property = mysqli_fetch_array($query)):
-					$pr_property_id = $array_property['pr_property1_id'];
-					$pr_property1 = $array_property['current_property_name'];
-				 ?> 
+                  $query = mysqli_query($con, $sql);
+                  while ($array_property = mysqli_fetch_array($query)):
+                    $pr_property_id = $array_property['pr_property1_id'];
+                    $pr_property1 = $array_property['current_property_name'];
+                ?> 
 				  
                   <tr>
                     <td><?php echo $pr_property_id; ?></td>
-                    <td><?php echo $pr_property1; ?>
-                
-					
+                    <td><?php echo $pr_property1; ?>					
                     <td style="width:150px;">
-						<input type="checkbox" class="property_check" id="<?php echo $pr_property_id; ?>"  <?php if($array_property['shop_id'] == ''){echo "checked disabled"; } ?> data-propertyid="<?php echo $pr_property1; ?>">
-					</td>				
-
-
+                      <input type="checkbox" class="property_check" id="<?php echo $pr_property_id; ?>"  <?php if($array_property['shop_id'] == ''){echo "checked disabled"; } ?> data-propertyid="<?php echo $pr_property1; ?>">
+                    </td>
                     <td><?php echo $array_property['shop_id']; ?>
                     <td><?php echo $array_property['shop_name']; ?>
                     <td><?php echo $array_property['address']; ?>
                     <td><?php echo $array_property['manager_name']; ?>
                     <td><?php echo $array_property['hvhh']; ?>
-                    <td><?php echo $array_property['law_name']; ?>
-
-
-
-
-					
+                    <td><?php echo $array_property['law_name']; ?>					
                     <td style="width:150px;">
-						<a href="#" id="<?php echo $pr_property_id; ?>" class="btn btn-danger btn-sm rounded-0 delete_client_button" data-toggle="modal" data-target="#deletemodal"  title="Ջնջել"><i class="fa fa-trash"></i></a>
-					</td>
-                  </tr>
-                 
+                      <a href="#" id="<?php echo $pr_property_id; ?>" class="btn btn-danger btn-sm rounded-0 delete_client_button" data-toggle="modal" data-target="#deletemodal"  title="Ջնջել"><i class="fa fa-trash"></i></a>
+                    </td>
+                  </tr>                 
                  <?php endwhile; ?>
                  
                   </tbody>
@@ -97,7 +87,8 @@
                   <tr>
                     <th>Հ\Հ</th>
                     <th>Գույք 1</th>
-					<th>Պահեստում է</th>
+                    <th>QR կոդ</th>
+					          <th>Պահեստում է</th>
                     <th>Խանութի Հ\Հ</th>
                     <th>Անուն</th>
                     <th>Հասցե</th>
