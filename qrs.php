@@ -199,8 +199,6 @@ include 'footer.php';
     const qr_code = $(this).attr('qr_code')
     const qr_shop = $(this).attr('qr_shop')
     const qr_property = $(this).attr('qr_property')
-    console.log('qr_code::::::',qr_code);
-    console.log('qr_shop::::::',qr_shop);
     
     $.ajax({
       type: "POST",

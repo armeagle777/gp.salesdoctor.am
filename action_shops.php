@@ -126,7 +126,7 @@
 												<label for="qr_id">QR համար</label>
 												<input readonly type="text" class="form-control" id="qr_id" name="qr_id" value="<?php echo $qr_id; ?>"  placeholder="QR համար">
 											</div>
-											<div class="form-group col-md-2">
+											<!-- <div class="form-group col-md-2">
 												<label for="property_1">Գույք 1</label>
 												<select id="property_1" name="property_1" class='form-control'>
 													<option value='0'>Ընտրել</option>
@@ -139,8 +139,8 @@
 															<option value="<?php echo $property_1_id; ?>"  <?php if($property_1_id==$property_1){ echo " selected"; } ?> ><?php echo $property_1_name ?></option>
 														<?php endwhile; ?>
 												</select>
-											</div>
-											<div class="form-group col-md-2">
+											</div> -->
+											<!-- <div class="form-group col-md-2">
 												<label for="property_2">Գույք 2</label>
 												<select id="property_2" name="property_2" class='form-control'>
 													<option value='0'>Ընտրել</option>
@@ -153,8 +153,8 @@
 															<option value="<?php echo $property_2_id; ?>"  <?php if($property_2_id==$property_2){ echo " selected"; } ?> ><?php echo $property_2_name ?></option>
 														<?php endwhile; ?>
 												</select>
-											</div>						  
-											<div class="form-group col-md-2">
+											</div>						   -->
+											<div class="form-group col-md-6">
 												<label for="network">Ցանց</label>							
 												<select name="network" class="form-control">
 													<option value="0"> Ընտրել </option>

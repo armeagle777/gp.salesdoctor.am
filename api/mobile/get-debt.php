@@ -10,6 +10,7 @@ if(isset($_GET['shop_id'])){
     $select_sql =  "SELECT 
                     	S.guyq, 
                     	S.marketing_payment,
+						S.hasDebt,
                         PAYMENTS.shop,
                         PAYMENTS.PAYED_DEBT
                     from 

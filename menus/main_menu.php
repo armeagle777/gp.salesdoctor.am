@@ -547,6 +547,14 @@
                 </p>
             </a>
         </li>	
+        <li class="nav-item has-treeview">
+            <a href="/as_classifications.php" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>
+                    Ոլորտներ
+                </p>
+            </a>
+        </li>	
     </ul>
 </li>		
 <li class="nav-item has-treeview">
