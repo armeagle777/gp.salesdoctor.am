@@ -125,8 +125,11 @@ if(isset($_GET['datebeet'])){
         							    $total_plans += (int)$marketing_payment;
         							    $total_payments += (int)$debt;
         							    $total_accepted += (int)$accepted_sum;
-										$is_disabled = $is_verified === '1' ? " disabled" : "";
-        							    
+										$button_title = $is_verified === '1' ? " Խմբագրել" : " Հաստատել";
+										$button_icon = $is_verified === '1' ? " <i class='fa fa-edit'></i>" : "<i class='fa fa-check'></i>";
+        							    $button_color = $is_verified === '1' ? " btn-outline-warning" : " btn-outline-success";
+										$sum_input_value= $is_verified === '1' ? $accepted_sum : $debt;
+
         							    $sql_sum = "SELECT SUM(accepted_sum) AS ACCEPTED_SUM FROM marketing_payments WHERE YEAR(created_at)= YEAR('$created_at') AND created_at <= '$created_at' AND shop = '$shop' GROUP BY shop";
         							 //   echo $sql_sum;
         							    $query_sum = mysqli_query($con, $sql_sum);
@@ -145,8 +148,13 @@ if(isset($_GET['datebeet'])){
             							<td><?php  echo $comment ; ?></td>
             							<td><?php  echo $MANAGER_NAME ; ?></td>
             							<td><?php  echo $created_at ; ?></td>
-										<td><button payment_id="<?php echo $id; ?>" debt="<?php echo $debt; ?>" class="btn btn-outline-success btn-sm verify_debt" title="Հաստատել" <?php echo $is_disabled; ?> >
-												<i class="fa fa-check"></i>
+										<td><button 
+												payment_id="<?php echo $id; ?>" 
+												debt="<?php echo $sum_input_value; ?>" 
+												class="btn <?php echo $button_color; ?> btn-sm verify_debt" 
+												title="<?php echo $button_title; ?>" 
+											>
+												<?php echo $button_icon; ?>
 											</button>
 										</td>
         					        </tr>

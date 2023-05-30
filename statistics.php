@@ -245,6 +245,10 @@ function getDistanceBetweenPointsNew($latitude1, $longitude1, $latitude2, $longi
 						<th>Մարքեթինգի տրամադրման անհրաժեշտություն</th>
 						<th class="text-nowrap">Ապրանքի ժամկետ</th>
 						<th>Ապրանքի քանակությունը սառնարանում</th>
+						<th><i class="fa fa-truck" aria-hidden="true"></i></th>
+                      	<th><i class="fa fa-image"></i></th>
+                      	<th><i class="fa fa-music" ></i></th>
+						<th><i class="fa fa-star" aria-hidden="true"></i></th>
 						<th>Ռադիուս</th>
 					<?php endif; ?>					
                     <th style="width:150px;">Դիտել</th>
@@ -264,12 +268,20 @@ function getDistanceBetweenPointsNew($latitude1, $longitude1, $latitude2, $longi
 										D.district_name AS DISTRICT_NAME,
 										RE.region_name AS REGION_NAME,
 										ASE.name AS as_class_name,
-										T.visit_id as TASK_IS_REGISTERED
+										T.visit_id as TASK_IS_REGISTERED,
+										A.audio,
+										I.image,
+										E.id AS IS_EVALUATED,
+										O.id AS HAS_ORDER
 									FROM visits 
 									INNER JOIN shops on visits.shop_id = shops.shop_id
 									LEFT JOIN district D ON D.id=shops.district
 									LEFT JOIN tasks T ON T.visit_id=visits.id
 									LEFT JOIN region RE ON RE.id = shops.region
+								LEFT JOIN evaluation_audio A ON A.visit_id=visits.id
+                            	LEFT JOIN visit_images I ON I.visit_id = visits.id
+								LEFT JOIN shop_evaluation E ON E.visit_id=visits.id
+                            	LEFT JOIN pr_orders_document O ON O.document_date LIKE 'visits.date%' AND O.shop_id=visits.shop_id
 									LEFT JOIN as_classifications ASE ON shops.as_classification_id = ASE.id
 									LEFT JOIN (select visit_id,
 										max(case when rate_id = 2  then rate_value end) guyqi_dirq,
@@ -362,6 +374,10 @@ function getDistanceBetweenPointsNew($latitude1, $longitude1, $latitude2, $longi
 									$MANAGHER_ID=$array_visits['MANAGHER_ID'];
 									$shop_latitude = $array_visits['shop_latitude'];
 									$shop_longitude = $array_visits['shop_longitude'];
+									$audio = $array_visits['audio'];
+									$image = $array_visits['image'];
+									$IS_EVALUATED = $array_visits['IS_EVALUATED'];
+									$HAS_ORDER = $array_visits['HAS_ORDER'];
 									
 									if(!empty($TASK_IS_REGISTERED) || empty($comment)){
 										$disabled=' disabled ';
@@ -417,7 +433,13 @@ function getDistanceBetweenPointsNew($latitude1, $longitude1, $latitude2, $longi
 						<td><?php echo $evaluation_count;  ?></td>
 				    		<?php endif; ?>				 
 				 			<?php if($not_grouped =='1'): ?>
-						<td><?php echo $comment; ?></td>
+						<td>
+						<textarea 
+							id="comment_input_<?php echo $visit_id; ?>" 
+							data-visitid="<?php echo $visit_id; ?>" 
+							class="form-control visit_comment">
+							<?php  echo $comment; ?>
+						</textarea>	
 						<td><?php  echo (int)$guyqi_dirq   ;?></td>
 						<td><?php  echo (int)$guyqi_vijak ;?></td>
 						<td><?php  echo (int)$apranqi_dasavorutyun ;?></td>
@@ -427,6 +449,28 @@ function getDistanceBetweenPointsNew($latitude1, $longitude1, $latitude2, $longi
 						<td><?php  echo (int)$marqetingi_anhrajeshtutyun ;?></td>
 						<td><?php  echo (int)$apranqi_jamket ;?></td>
 						<td><?php  echo (int)$apranqi_qanakutyun ;?></td>
+						<td>
+							<?php if($HAS_ORDER): ?>
+								<!--<input type="checkbox" class="form-control" onclick='return false' checked disabled />-->
+								<i class="fa fa-truck text-muted" aria-hidden="true"></i>
+							<?php endif; ?>
+						</td>
+						<td>
+							<?php if($image): ?>
+								<a href="/api/mobile/upload/<?php echo $image; ?>" class="text-muted" target="_blank" download ><i class="fa fa-image"></i></a>
+							<?php endif; ?>
+						</td>
+						<td>
+							<?php if($audio): ?>
+								<a href="/api/mobile/upload/sound/<?php echo $audio; ?>" class="text-muted" target="_blank" download ><i class="fa fa-music" ></i></a>
+							<?php endif; ?>
+						</td>
+						<td>
+							<?php if($IS_EVALUATED): ?>
+								<!--<input type="checkbox" class="form-control" onclick='return false' checked disabled />-->
+								<i class="fa fa-star text-muted" aria-hidden="true"></i>
+							<?php endif; ?>
+						</td>
 						<td>
 							<?php 
 								if($shop_latitude !='' and $not_grouped == '1'){
@@ -573,6 +617,10 @@ function getDistanceBetweenPointsNew($latitude1, $longitude1, $latitude2, $longi
 						<th></th>
 						<th></th>
 						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
 					<?php endif; ?>
                     <th style="min-width:170px;">Դիտել</th>
                   </tr>
@@ -640,6 +688,27 @@ include 'footer.php';
 
 
 <script>
+
+$(document).on('change','.visit_comment', function(){	
+	
+	var visit_comment = $(this).val();
+	var visit_id = $(this).data("visitid");
+	var url = '/api/pr_audit.php';
+		
+    $.ajax({
+           type: "POST",
+           url: url,
+           data: {
+				visit_id: visit_id,
+				visit_comment: visit_comment,
+				check_comment: "check_comment"
+		   }, 
+           	success: function(data){			  
+					
+			}		   
+	});
+	
+});
 
 $('.add_task_from_comment').on('click', function(){
     const visit_id = $(this).attr('visit_id')

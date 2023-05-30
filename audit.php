@@ -208,6 +208,10 @@
 								<th class="text-nowrap">Ապրանքի ժամկետ</th>
 								<th>Ապրանքի քանակությունը սառնարանում</th>
 								<th>Մեկնաբանություն</th>
+								<th><i class="fa fa-truck" aria-hidden="true"></i></th>
+								<th><i class="fa fa-image"></i></th>
+								<th><i class="fa fa-music" ></i></th>
+								<th><i class="fa fa-star" aria-hidden="true"></i></th>
 								<th>Քարտեզ</th>
 							<?php endif; ?>
 						</tr>
@@ -226,11 +230,19 @@
 										$query_shop_select ";													
 							}else{
 								$sql=  "SELECT *, 
-											visit_images.visit_id AS v_id 
+											visit_images.visit_id AS v_id,
+											A.audio,
+											I.image,
+											E.id AS IS_EVALUATED,
+											O.id AS HAS_ORDER 
 										FROM visit_images 
 											INNER JOIN visits ON visit_images.visit_id = visits.id 
 											LEFT JOIN shops ON visits.shop_id = shops.shop_id 
 											LEFT JOIN district on shops.district = district.id
+										LEFT JOIN evaluation_audio A ON A.visit_id=visits.id
+										LEFT JOIN visit_images I ON I.visit_id = visits.id
+										LEFT JOIN shop_evaluation E ON E.visit_id=visits.id
+										LEFT JOIN pr_orders_document O ON O.document_date LIKE 'visits.date%' AND O.shop_id=visits.shop_id
 											LEFT JOIN (select visit_id,
 												max(case when rate_id = 2  then rate_value end) guyqi_dirq,
 												max(case when rate_id = 3 then rate_value end) guyqi_vijak,
@@ -277,6 +289,10 @@
 								$marqetingi_anhrajeshtutyun = $array_visits['marqetingi_anhrajeshtutyun'];
 								$apranqi_jamket = $array_visits['apranqi_jamket'];
 								$apranqi_qanakutyun = $array_visits['apranqi_qanakutyun'];
+								$audio = $array_visits['audio'];
+								$image = $array_visits['image'];
+								$IS_EVALUATED = $array_visits['IS_EVALUATED'];
+								$HAS_ORDER = $array_visits['HAS_ORDER'];
 								
 								$query_shop = mysqli_query($con, "SELECT static_manager, qr_id, name, address, shop_latitude, shop_longitude, district FROM shops WHERE shop_id='$shop_id' ");
 								$array_shop = mysqli_fetch_array($query_shop);
@@ -349,12 +365,34 @@
 									<td><?php  echo (int)$apranqi_jamket ;?></td>
 									<td><?php  echo (int)$apranqi_qanakutyun ;?></td>
 									<td>				 
-										<?php 
+										<!-- <?php 
 											$query_comment = mysqli_query($con, "SELECT comment FROM visits WHERE id = '$visit_id' ");
 											$array_comment = mysqli_fetch_array($query_comment);
-										?>				 
+										?>				  -->
 										<textarea id="comment_input_<?php echo $visit_id; ?>" data-visitid="<?php echo $visit_id; ?>" class="form-control visit_comment"><?php  echo $array_comment['comment']; ?></textarea>				 				
-									</td>				 
+									</td>
+									<td>
+										<?php if($HAS_ORDER): ?>
+											<!--<input type="checkbox" class="form-control" onclick='return false' checked disabled />-->
+											<i class="fa fa-truck text-muted" aria-hidden="true"></i>
+										<?php endif; ?>
+									</td>
+									<td>
+										<?php if($image): ?>
+											<a href="/api/mobile/upload/<?php echo $image; ?>" class="text-muted" target="_blank" download ><i class="fa fa-image"></i></a>
+										<?php endif; ?>
+									</td>
+									<td>
+										<?php if($audio): ?>
+											<a href="/api/mobile/upload/sound/<?php echo $audio; ?>" class="text-muted" target="_blank" download ><i class="fa fa-music" ></i></a>
+										<?php endif; ?>
+									</td>
+									<td>
+										<?php if($IS_EVALUATED): ?>
+											<!--<input type="checkbox" class="form-control" onclick='return false' checked disabled />-->
+											<i class="fa fa-star text-muted" aria-hidden="true"></i>
+										<?php endif; ?>
+									</td>									
 									<td style="width:150px;">								
 										<button visit_id="<?php echo $visit_id; ?>" manager_id="<?php echo $manager_id ; ?>" task_text="<?php echo $shop_address.'->'.$shop_name  ; ?>" class="btn btn-secondary btn-sm add_task_from_comment" style="color:#fff" title="Ստեղծել առաջադրանք"><i class='fa fa-tasks'></i></button>			 
 										<button style="width: 33px;" class="btn btn-primary btn-sm rounded-0 save_coordinates after_<?php echo $visit_id; ?>"  data-lat="<?php echo $latitude; ?>" data-long="<?php echo $longitude; ?>" data-curshop="<?php echo $shop_id; ?>" data-visitid="<?php echo $visit_id; ?>" title="Պահպանել կոորդինատները"><i class="fas fa-save"></i></button>
@@ -396,6 +434,10 @@
 								<th>Ժամանակ</th>
 								<th>Ռադիուս</th>
 								<th>Նկարներ</th>								
+								<th></th>
+								<th></th>
+								<th></th>
+								<th></th>
 								<th></th>
 								<th></th>
 								<th></th>
@@ -508,14 +550,12 @@ $(document).on('change','.visit_comment', function(){
 				visit_comment: visit_comment,
 				check_comment: "check_comment"
 		   }, 
-           success: function(data)
-			   {			  
+           	success: function(data){			  
 
-			   }
-		   
-         });
-	
+			}		   
 	});
+	
+});
 
 $( "#region" ).change(function() {
 	  
